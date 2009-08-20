@@ -11,9 +11,9 @@ class varnish {
   package { "varnish": ensure => present }
 
   service { "varnish":
-    enable  => true,
-    ensure  => "running",
-    pattern => "sbin/varnishd",
+    enable  => false,
+    ensure  => "stopped",
+    pattern => "/var/run/varnishd.pid",
     require => Package["varnish"],
   }
 
@@ -152,6 +152,7 @@ define varnish::instance($listen_address="",
   service { "varnish-${name}":
     enable  => true,
     ensure  => running,
+    pattern => "/var/run/varnishd-${name}.pid",
     require => [File["/etc/init.d/varnish-${name}"], Service["varnishlog"]],
   }
 
