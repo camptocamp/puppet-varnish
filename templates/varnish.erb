@@ -6,19 +6,23 @@
 # shell script fragment.
 #
 
-# Maximum number of open files (for ulimit -n)
-NFILES=131072
-
 # Default varnish instance name is the local nodename.  Can be overridden with
 # the -n switch, to have more instances on a single server.
-INSTANCE=$(uname -n)
+INSTANCE="<%= name %>"
+
+# Maximum number of open files (for ulimit -n)
+NFILES="<%= nfiles %>"
+ulimit -n $NFILES
 
 # Locked shared memory (for ulimit -l)
 # Default log size is 82MB + header
-MEMLOCK=82000
+MEMLOCK="<%= memlock %>"
+ulimit -l $MEMLOCK
 
 # Maximum size of corefile (for ulimit -c). Default in Fedora is 0
 # DAEMON_COREFILE_LIMIT="unlimited"
+DAEMON_COREFILE_LIMIT="<%= corelimit %>"
+ulimit -S -c $DAEMON_COREFILE_LIMIT
 
 # This file contains 4 alternatives, please use only one.
 
@@ -27,11 +31,11 @@ MEMLOCK=82000
 # Listen on port 6081, administration on localhost:6082, and forward to
 # content server on localhost:8080.  Use a fixed-size cache file.
 #
-DAEMON_OPTS="-a :6081 \
-             -T localhost:6082 \
-	     -b localhost:8080 \
-	     -u varnish -g varnish \
-	     -s file,/var/lib/varnish/$INSTANCE/varnish_storage.bin,1G"
+#DAEMON_OPTS="-a :6081 \
+#             -T localhost:6082 \
+#	     -b localhost:8080 \
+#	     -u varnish -g varnish \
+#	     -s file,/var/lib/varnish/$INSTANCE/varnish_storage.bin,1G"
 
 
 ## Alternative 2, Configuration with VCL
@@ -99,3 +103,20 @@ DAEMON_OPTS="-a :6081 \
 ## Alternative 4, Do It Yourself
 #
 # DAEMON_OPTS=""
+
+DAEMON_OPTS="-n <%= name %> \
+             -u varnish -g varnish \
+             -a <%= listen_address %>:<%= listen_port %> \
+             -T <%= admin_address %>:<%= admin_port %> \
+             -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,<%= storage %> \
+<% if vcl_file != false -%>
+             -f /etc/varnish/<%= name %>.vcl \
+<% end -%>
+<% if backend != false -%>
+             -b <%= backend %> \
+<% end -%>
+<% params.each do |param| -%>
+             -p <%= param %> \
+<% end -%>
+"
+
