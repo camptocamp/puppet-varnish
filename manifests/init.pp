@@ -45,6 +45,7 @@ Parameters:
 - *vcl_file*: location of the instance's VCL file, located on puppet's
   fileserver (puppet://host/module/path.vcl). This is passed to "varnishd -f".
   Defaults to none.
+- *vcl_content*: content of the instance's VCL file. Defaults to none.
 - *storage*: size of varnish's cache, either in bytes (with a K/M/G/T suffix)
   or in percentage of the space left on the device. Defaults to 50%.
 - *params*: array of "key=value" strings to be passed to "varnishd -p"
@@ -94,6 +95,7 @@ define varnish::instance($listen_address="",
                          $admin_port="6082",
                          $backend=false,
                          $vcl_file=false,
+                         $vcl_content=false,
                          $storage="50%",
                          $params=[],
                          $nfiles="131072",
@@ -116,6 +118,15 @@ define varnish::instance($listen_address="",
     file { "/etc/varnish/${name}.vcl":
       ensure  => present,
       source  => $vcl_file,
+      require => Package["varnish"],
+      notify  => Service["varnish-${name}"],
+    }
+  }
+
+  if ($vcl_content) {
+    file { "/etc/varnish/${name}.vcl":
+      ensure => present,
+      content => $vcl_content,
       require => Package["varnish"],
       notify  => Service["varnish-${name}"],
     }
