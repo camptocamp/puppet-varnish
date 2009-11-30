@@ -145,7 +145,7 @@ define varnish::instance($listen_address="",
 
     RedHat,Fedora: {
       exec { "create varnish-${name} initscript":
-        command => "sed -r -e 's|(/etc/default/varnish)|\\1-${name}|' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
+        command => "sed -r -e 's|(/etc/sysconfig/varnish)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
         creates => "/etc/init.d/varnish-${name}",
         require => Package["varnish"],
       }
