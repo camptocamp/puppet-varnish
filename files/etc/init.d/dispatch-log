@@ -1,0 +1,55 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:             dispatchlog
+# Required-Start:       $local_fs $remote_fs $network
+# Required-Stop:        $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start varnishncsa dispatch logger
+# Description:       This script provides logging for varnish
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+NAME=dispatch-log
+DESC="HTTP accelerator log deamon - dispatcher"
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/local/bin/$NAME
+PIDFILE=/var/run/$NAME.pid
+LOGFILE=/var/log/varnish/varnish.log
+
+test -x $DAEMON || exit 0
+
+DAEMON_OPTS="-a -w ${LOGFILE} -D -P $PIDFILE"
+
+case "$1" in
+  start)
+    log_daemon_msg "Starting $DESC"
+    log_progress_msg $NAME
+    if start-stop-daemon -b --start --quiet --exec ${DAEMON} ;then
+      log_end_msg 0
+    else    
+      log_end_msg 1
+      exit 1
+    fi
+  ;;
+  stop)
+    log_daemon_msg "Stopping $DESC"
+    log_progress_msg $NAME
+    if kill -6 $(cat $PIDFILE); then
+      log_end_msg 0
+    else    
+      log_end_msg 1
+    fi
+  ;;
+  restart)
+  $0 stop
+  sleep 2
+  $0 start
+  ;;
+  *)
+    log_success_msg "Usage: $0 {start|stop|restart}"
+    exit 1
+  ;;
+esac

@@ -1,0 +1,159 @@
+#!/usr/bin/env perl
+use strict;
+use Sys::Syslog qw( :DEFAULT setlogsock);
+
+
+# groups. set a single file/diretory for many hosts.
+my $config_file = '/etc/dispatch-log.conf';
+
+
+##########################
+##########################
+##                      ##
+## do NOT edit bellow ! ##
+##                      ##
+##########################
+##########################
+
+&logit('info', "Starting daemon");
+
+my $pid = $$;
+
+my ($date, $url,$vhost, $line, %fhandlers, $ldate, $mtime);
+my $LOGDIR = "/mnt/varnish";
+my %groups = () ;
+
+if ( -e $config_file ) {
+  open config, '<',$config_file;
+  my $config = join '', <config> ;
+  close config;
+  &logit('info','Configuration file found. Loading...');
+  eval $config;
+  if ($@) {
+    &logit('err','Error in configuration file - Cannot start - exiting');
+    exit(1);
+  }
+  &logit('info','Configuration loaded.');
+  
+  # get mtime, so that we can relload it without restarting script.
+  my @fstats = stat($config_file);
+  $mtime = $fstats[9];
+}
+
+# manage pid file. default /var/run/dispatch-log.pid; set it in config file.
+my $pid_file = "/var/run/dispatch-log.pid";
+open my $fd,'>', $pid_file or die $!;
+print $fd $pid;
+close $fd or die $!;
+
+
+# manage signals.
+$SIG{'INT'} = 'myexit';
+$SIG{'ABRT'} = 'myexit';
+
+open STDIN, '/usr/bin/varnishncsa |' or die('Cannot open /usr/bin/varnishncsa!');
+
+while (<STDIN>) {
+  $line = $_ ;
+  # fetch url
+  $line =~ /(POST|GET) (http.+) HTTP/i ;
+  $url = "$2";
+
+  # fetch vhost
+  $url =~ m!http://([a-z0-9\.\-\_]+)/!i ;
+  $vhost = $1;
+
+  my $dir = 'garbage';
+  # do we have to reload config file ?
+  if ( -e $config_file ) {
+    my @fstats = stat($config_file);
+    my $lmtime = $fstats[9];
+    if ($lmtime != $mtime) { # reload
+      &logit('info', 'Configuration changed. Trying to reload');
+      %groups = &myreload();
+
+      # set mtime to last mtime
+      $mtime = $lmtime;
+    }
+  }
+  if ($groups{$vhost}) {
+    $dir = $groups{$vhost};
+  }
+
+
+  # create directoy
+  if (! -d "$LOGDIR/$dir" ) {
+    mkdir "$LOGDIR/$dir";
+  }
+
+  my @timeData = localtime(time);
+  my $year     = $timeData[5]+1900 ;
+  my $month    = $timeData[4] + 1;
+  my $day      = $timeData[3];
+  my $hour     = $timeData[2];
+  my $minute   = $timeData[1];
+  $date = "$year-$month-$day";
+
+  my $f_log = "$LOGDIR/$dir/$date.log";
+
+  $ldate = $date if (! $ldate);
+
+  if (( $ldate ne $date ) and ($fhandlers{$vhost}) ) {
+    # if date changes, close log, and reopen it.
+    my $fh = $fhandlers{$vhost} ;
+    print $fh "Closing log - reopen $date\n";
+    close $fh;
+
+    local *LOG ;
+    open LOG, ">>", $f_log ;
+    $fhandlers{$vhost} = *LOG ;
+  }
+
+  # keep filehandler in a hashmap.
+  if (! $fhandlers{$vhost}) {
+    local *LOG ;
+    open LOG, ">>", $f_log ;
+    $fhandlers{$vhost} = *LOG ;
+  }
+
+  my $flog = $fhandlers{$vhost} ;
+  print $flog $line ;
+  $ldate = $date ;
+}
+
+sub logit() {
+  my ($priority, $msg) = @_ ;
+  return 1 unless ($priority =~ /info|err|debug/);
+  setlogsock('unix');
+  openlog('dispatch-log','pid','daemon');
+  syslog($priority, $msg);
+  closelog();
+  return 0;
+}
+
+sub myreload() {
+  open config, '<',$config_file;
+  my $config = join '', <config> ;
+  close config;
+  my %old_groups = %groups;
+  %groups = ();
+  eval $config;
+  if ($@) {
+    &logit('err', 'An error occured while reloading '.$config_file.'. Please check.');
+    return %old_groups;
+  }
+  &logit('info', 'Configuration reloaded');
+  return %groups;
+}
+
+sub myexit() {
+  &logit('info', "Exiting. Closing files...");
+  my $fh;
+  foreach my $key (keys %fhandlers) {
+    $fh = $fhandlers{$key};
+    &logit('info', "  $key");
+    close $fh;
+  }
+  unlink $pid_file;
+  exit(0);
+}
