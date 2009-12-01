@@ -51,13 +51,6 @@ class varnish {
     source => "puppet:///varnish/etc/init.d/dispatch-log",
   }
 
-  service { "dispatch-log":
-    enable  => true,
-    ensure  => "running",
-    pattern => "bin/dispatch-log",
-    require => [ Package["varnish"], File["/etc/init.d/dispatch-log"], File["/usr/local/bin/dispatch-log"] ],
-  }
-
 }
 
 /*
