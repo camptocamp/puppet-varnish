@@ -15,6 +15,9 @@ my $config_file = '/etc/dispatch-log.conf';
 ##########################
 ##########################
 
+# autoflush
+$| = 1;
+
 &logit('info', "Starting daemon");
 
 my $pid = $$;
@@ -86,13 +89,7 @@ while (<STDIN>) {
     mkdir "$LOGDIR/$dir";
   }
 
-  my @timeData = localtime(time);
-  my $year     = $timeData[5]+1900 ;
-  my $month    = $timeData[4] + 1;
-  my $day      = $timeData[3];
-  my $hour     = $timeData[2];
-  my $minute   = $timeData[1];
-  $date = "$year-$month-$day";
+  $date = POSIX::strftime("%Y-%m-%d", localtime);
 
   my $f_log = "$LOGDIR/$dir/$date.log";
 
@@ -101,8 +98,8 @@ while (<STDIN>) {
   if (( $ldate ne $date ) and ($fhandlers{$vhost}) ) {
     # if date changes, close log, and reopen it.
     my $fh = $fhandlers{$vhost} ;
-    print $fh "Closing log - reopen $date\n";
     close $fh;
+    &logit("info", "Closing log - reopen $date\n");
 
     local *LOG ;
     open LOG, ">>", $f_log ;
