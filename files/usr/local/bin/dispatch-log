@@ -117,8 +117,22 @@ while (<STDIN>) {
   }
 
   my $flog = $fhandlers{$vhost} ;
-  print $flog $line ;
+  print $flog $line or &exit_on_failure('Cannot write to log file!');
   $ldate = $date ;
+}
+
+close STDIN;
+
+# we shouldn't arrive at this part.
+# If such a thing happens, that means that varnishncsa
+# died... that's not cool
+&logit('err', 'varnishncsa just died! Please check what happened');
+
+
+sub exit_on_failure() {
+  my $msg = shift;
+  &logit('err', $msg);
+  &myexit();
 }
 
 sub logit() {
