@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use Sys::Syslog qw( :DEFAULT setlogsock);
+use FileHandle;
 
 
 # groups. set a single file/diretory for many hosts.
@@ -103,6 +104,7 @@ while (<STDIN>) {
 
     local *LOG ;
     open LOG, ">>", $f_log ;
+    LOG->autoflush(1);
     $fhandlers{$vhost} = *LOG ;
   }
 
@@ -110,6 +112,7 @@ while (<STDIN>) {
   if (! $fhandlers{$vhost}) {
     local *LOG ;
     open LOG, ">>", $f_log ;
+    LOG->autoflush(1);
     $fhandlers{$vhost} = *LOG ;
   }
 
