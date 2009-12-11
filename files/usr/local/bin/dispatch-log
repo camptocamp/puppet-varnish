@@ -98,7 +98,7 @@ while (<STDIN>) {
 
   if ( $ldate ne $date ) {
     # if date changes, close all logs.
-    my $fh
+    my $fh;
     foreach my $key (keys %fhandlers) {
       $fh = $fhandlers{$key};
       &logit('info', "Date changed - closing $key log file");
