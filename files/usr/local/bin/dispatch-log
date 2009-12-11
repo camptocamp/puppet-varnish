@@ -24,6 +24,7 @@ $| = 1;
 my $pid = $$;
 
 my ($date, $url,$vhost, $line, %fhandlers, $ldate, $mtime);
+my $pid_file = "/var/run/dispatch-log.pid";
 my $LOGDIR = "/mnt/varnish";
 my %groups = () ;
 
@@ -44,8 +45,6 @@ if ( -e $config_file ) {
   $mtime = $fstats[9];
 }
 
-# manage pid file. default /var/run/dispatch-log.pid; set it in config file.
-my $pid_file = "/var/run/dispatch-log.pid";
 open my $fd,'>', $pid_file or die $!;
 print $fd $pid;
 close $fd or die $!;
