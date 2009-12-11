@@ -170,7 +170,7 @@ define varnish::instance($listen_address="",
       }
     }
 
-    RedHat,Fedora: {
+    RedHat,Fedora,CentOS: {
       exec { "create varnish-${name} initscript":
         command => "sed -r -e 's|(/etc/sysconfig/varnish)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
         creates => "/etc/init.d/varnish-${name}",
@@ -190,7 +190,13 @@ define varnish::instance($listen_address="",
   service { "varnish-${name}":
     enable  => true,
     ensure  => running,
-    pattern => "/var/run/varnishd-${name}.pid",
+    pattern => $operatingsystem ? {
+      Debian => "/var/run/varnishd-${name}.pid",
+      Ubuntu => "/var/run/varnishd-${name}.pid",
+      RedHat => "/var/run/varnish.pid-${name}",
+      Fedora => "/var/run/varnish.pid-${name}",
+      CentOS => "/var/run/varnish.pid-${name}",
+    },
     require => [File["/etc/init.d/varnish-${name}"], Service["varnishlog"]],
   }
 
