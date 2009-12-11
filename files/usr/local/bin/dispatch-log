@@ -96,16 +96,14 @@ while (<STDIN>) {
 
   $ldate = $date if (! $ldate);
 
-  if (( $ldate ne $date ) and ($fhandlers{$vhost}) ) {
-    # if date changes, close log, and reopen it.
-    my $fh = $fhandlers{$vhost} ;
-    close $fh;
-    &logit("info", "Closing log - reopen $date\n");
-
-    local *LOG ;
-    open LOG, ">>", $f_log ;
-    LOG->autoflush(1);
-    $fhandlers{$vhost} = *LOG ;
+  if ( $ldate ne $date ) {
+    # if date changes, close all logs.
+    my $fh
+    foreach my $key (keys %fhandlers) {
+      $fh = $fhandlers{$key};
+      &logit('info', "Date changed - closing $key log file");
+      close $fh;
+    }
   }
 
   # keep filehandler in a hashmap.
