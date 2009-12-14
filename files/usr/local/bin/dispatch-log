@@ -101,6 +101,7 @@ while (<STDIN>) {
     foreach my $key (keys %fhandlers) {
       $fh = $fhandlers{$key};
       &logit('info', "Date changed - closing $key log file");
+      unset($fhandlers{$key});
       close $fh;
     }
   }
