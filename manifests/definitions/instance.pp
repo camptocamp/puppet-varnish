@@ -18,8 +18,10 @@ Parameters:
   fileserver (puppet://host/module/path.vcl). This is passed to "varnishd -f".
   Defaults to none.
 - *vcl_content*: content of the instance's VCL file. Defaults to none.
-- *storage*: size of varnish's cache, either in bytes (with a K/M/G/T suffix)
+- *storage_size*: size of varnish's cache, either in bytes (with a K/M/G/T suffix)
   or in percentage of the space left on the device. Defaults to 50%.
+- *storage*: complete storage string, usually something like
+  "file,/var/lib/varnish/varnish_storage.bin,1G".
 - *params*: array of "key=value" strings to be passed to "varnishd -p"
   (run-time parameters). Defaults to none.
 - *nfiles*: max number of open files (ulimit -n) allocated to varnishd,
@@ -46,7 +48,7 @@ Example usage:
     listen_address => "192.168.1.10",
     listen_port    => "80",
     admin_port     => "6082",
-    storage        => "5G",
+    storage_size   => "5G",
     params         => ["thread_pool_min=1",
                        "thread_pool_max=1000",
                        "thread_pool_timeout=120"],
@@ -68,7 +70,8 @@ define varnish::instance($listen_address="",
                          $backend=false,
                          $vcl_file=false,
                          $vcl_content=false,
-                         $storage="50%",
+                         $storage_size="50%",
+                         $storage=false,
                          $params=[],
                          $nfiles="131072",
                          $memlock="82000",

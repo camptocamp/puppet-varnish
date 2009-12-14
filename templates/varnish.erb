@@ -108,7 +108,11 @@ DAEMON_OPTS="-n <%= name %> \
              -u varnish -g varnish \
              -a <%= listen_address %>:<%= listen_port %> \
              -T <%= admin_address %>:<%= admin_port %> \
-             -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,<%= storage %> \
+<% if storage %>
+             -s <%= storage %> \
+<% else %>
+             -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,<%= storage_size %> \
+<% end %>
 <% if vcl_file or vcl_content -%>
              -f /etc/varnish/<%= name %>.vcl \
 <% end -%>
