@@ -33,6 +33,9 @@ Parameters:
 
 See varnishd(1) and /etc/{default,sysconfig}/varnish for more details.
 
+Notes:
+- varnish's configuration will be reloaded when it changes, using
+  /usr/local/sbin/vcl-reload.sh
 
 Requires:
 - Class["varnish"]
@@ -94,8 +97,7 @@ define varnish::instance($listen_address="",
       ensure  => present,
       source  => $vcl_file,
       require => Package["varnish"],
-      # BUG: disable until varnish 2.1, which will support permanent storage
-      #notify  => Service["varnish-${name}"],
+      notify  => Exec["reload vcl $name"],
     }
   }
 
@@ -104,9 +106,14 @@ define varnish::instance($listen_address="",
       ensure => present,
       content => $vcl_content,
       require => Package["varnish"],
-      # BUG: disable until varnish 2.1, which will support permanent storage
-      #notify  => Service["varnish-${name}"],
+      notify  => Exec["reload vcl $name"],
     }
+  }
+
+  # reload VCL file when changed, without restarting the varnish service.
+  exec { "reload vcl $name":
+    command     => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${name}.vcl",
+    refreshonly => true,
   }
 
   # generate instance initscript by filtering the original one through sed.
