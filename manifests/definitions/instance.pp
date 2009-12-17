@@ -94,7 +94,8 @@ define varnish::instance($listen_address="",
       ensure  => present,
       source  => $vcl_file,
       require => Package["varnish"],
-      notify  => Service["varnish-${name}"],
+      # BUG: disable until varnish 2.1, which will support permanent storage
+      #notify  => Service["varnish-${name}"],
     }
   }
 
@@ -103,7 +104,8 @@ define varnish::instance($listen_address="",
       ensure => present,
       content => $vcl_content,
       require => Package["varnish"],
-      notify  => Service["varnish-${name}"],
+      # BUG: disable until varnish 2.1, which will support permanent storage
+      #notify  => Service["varnish-${name}"],
     }
   }
 
