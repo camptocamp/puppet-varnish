@@ -96,24 +96,18 @@ define varnish::instance($listen_address="",
     file { "/etc/varnish/${name}.vcl":
       ensure  => present,
       source  => $vcl_file,
+      notify => Service["varnish-${name}"],
       require => Package["varnish"],
-      notify  => Exec["reload vcl $name"],
     }
   }
 
-  if ($vcl_content) {
+  if ($vcl_content != false) {
     file { "/etc/varnish/${name}.vcl":
       ensure => present,
       content => $vcl_content,
+      notify => Service["varnish-${name}"],
       require => Package["varnish"],
-      notify  => Exec["reload vcl $name"],
     }
-  }
-
-  # reload VCL file when changed, without restarting the varnish service.
-  exec { "reload vcl $name":
-    command     => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${name}.vcl",
-    refreshonly => true,
   }
 
   # generate instance initscript by filtering the original one through sed.
@@ -153,8 +147,16 @@ define varnish::instance($listen_address="",
       RedHat => "/var/run/varnish.pid-${name}",
       Fedora => "/var/run/varnish.pid-${name}",
       CentOS => "/var/run/varnish.pid-${name}",
-    },
-    require => [File["/etc/init.d/varnish-${name}"], Service["varnishlog"]],
+    }, 
+    # reload VCL file when changed, without restarting the varnish service.
+    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${name}.vcl",
+    require => [
+      File["/etc/init.d/varnish-${name}"],
+      File["/usr/local/sbin/vcl-reload.sh"],
+      File["varnish-${name} startup config"],
+      Service["varnish"],
+      Service["varnishlog"]
+    ],
   }
 
 
