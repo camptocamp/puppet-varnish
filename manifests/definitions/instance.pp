@@ -96,16 +96,16 @@ define varnish::instance($listen_address="",
     file { "/etc/varnish/${name}.vcl":
       ensure  => present,
       source  => $vcl_file,
-      notify => Service["varnish-${name}"],
+      notify  => Service["varnish-${name}"],
       require => Package["varnish"],
     }
   }
 
   if ($vcl_content != false) {
     file { "/etc/varnish/${name}.vcl":
-      ensure => present,
+      ensure  => present,
       content => $vcl_content,
-      notify => Service["varnish-${name}"],
+      notify  => Service["varnish-${name}"],
       require => Package["varnish"],
     }
   }
