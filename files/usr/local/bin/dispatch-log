@@ -2,10 +2,11 @@
 use strict;
 use Sys::Syslog qw( :DEFAULT setlogsock);
 use FileHandle;
+use Sys::Hostname;
 
-
-# groups. set a single file/diretory for many hosts.
-my $config_file = '/etc/dispatch-log.conf';
+# varnish' configuration file
+my $host = hostname();
+my $config_file = '/etc/varnish/'.$host.'.vcl' ;
 
 
 ##########################
@@ -23,27 +24,10 @@ $| = 1;
 
 my $pid = $$;
 
-my ($date, $url,$vhost, $line, %fhandlers, $ldate, $mtime);
-my $pid_file = "/var/run/dispatch-log.pid";
-my $LOGDIR = "/mnt/varnish";
-my %groups = () ;
-
-if ( -e $config_file ) {
-  open config, '<',$config_file;
-  my $config = join '', <config> ;
-  close config;
-  &logit('info','Configuration file found. Loading...');
-  eval $config;
-  if ($@) {
-    &logit('err','Error in configuration file - Cannot start - exiting');
-    exit(1);
-  }
-  &logit('info','Configuration loaded.');
-  
-  # get mtime, so that we can relload it without restarting script.
-  my @fstats = stat($config_file);
-  $mtime = $fstats[9];
-}
+my ($date, $url,$vhost, $line, %fhandlers, $ldate, $mtime) ;
+my $pid_file = "/var/run/dispatch-log.pid" ;
+my $LOGDIR = "/mnt/varnish" ;
+my %groups = &loadConfig() ;
 
 open my $fd,'>', $pid_file or die $!;
 print $fd $pid;
@@ -73,7 +57,7 @@ while (<STDIN>) {
     my $lmtime = $fstats[9];
     if ($lmtime != $mtime) { # reload
       &logit('info', 'Configuration changed. Trying to reload');
-      %groups = &myreload();
+      %groups = &loadConfig();
 
       # set mtime to last mtime
       $mtime = $lmtime;
@@ -81,6 +65,12 @@ while (<STDIN>) {
   }
   if ($groups{$vhost}) {
     $dir = $groups{$vhost};
+  } else {
+    while (my ($key, $value) = each(%groups) ) {
+      if ($vhost =~ $key) {
+        $dir = $value;
+      }
+    }
   }
 
 
@@ -143,18 +133,24 @@ sub logit() {
   return 0;
 }
 
-sub myreload() {
-  open config, '<',$config_file;
-  my $config = join '', <config> ;
-  close config;
-  my %old_groups = %groups;
-  %groups = ();
-  eval $config;
-  if ($@) {
-    &logit('err', 'An error occured while reloading '.$config_file.'. Please check.');
-    return %old_groups;
+sub loadConfig() {
+  open FILE, '<', $config_file or die $! ;
+
+  my $regex = 0;
+  my %groups;
+  my $backend = 0;
+  while (<FILE>) {
+    if (m/if\s*\(\s*req.http.host [~=]{1,2} "(.*)"\)\s*\{/ ) {
+      $regex = $1 ;
+    }
+    if (m/set req.backend = ([a-zA-Z0-9_]+);$/ ) {
+      $backend = $1;
+      $groups{$regex} = $backend;
+      $regex = 0;
+    }
   }
   &logit('info', 'Configuration reloaded');
+  close(FILE);
   return %groups;
 }
 
