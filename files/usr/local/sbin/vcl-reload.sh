@@ -22,9 +22,15 @@ error()
     exit 1
 }
 
+echo "@@@ Checking VCL file syntax:"
+varnishd -d -f $FILE < /dev/null || error
+
+echo -e "\n@@@ Loading new VCL file:"
 varnishadm -T $HOSTPORT vcl.load reload$NOW $FILE || error
 varnishadm -T $HOSTPORT vcl.use reload$NOW || error
-echo Current configs:
+
+
+echo -e "\n@@@ Currently available VCL configs:"
 varnishadm -T $HOSTPORT vcl.list
 
 exit 0
