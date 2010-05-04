@@ -54,16 +54,16 @@ close $fd or die $!;
 $SIG{'INT'} = 'myexit';
 $SIG{'ABRT'} = 'myexit';
 
-open STDIN, '/usr/bin/varnishncsa |' or die('Cannot open /usr/bin/varnishncsa!');
+open STDIN, '/usr/bin/varnishncsa -c |' or die('Cannot open /usr/bin/varnishncsa!');
 
 while (<STDIN>) {
   $line = $_ ;
   # fetch url
-  $line =~ /(POST|GET) (http.+) HTTP/i ;
+  $line =~ m!(?:POST|GET) (http.+) HTTP!i ;
   $url = "$2";
 
   # fetch vhost
-  $url =~ m!http://([a-z0-9\.\-\_]+)/!i ;
+  $url =~ m!http(?:s)?://([a-z0-9_\.\-]+)(?::[0-9]{2,4})?/!i ;
   $vhost = $1;
 
   my $dir = 'garbage';
