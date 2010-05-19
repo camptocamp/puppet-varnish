@@ -23,7 +23,7 @@ error()
 }
 
 echo "@@@ Checking VCL file syntax:"
-varnishd -d -f $FILE < /dev/null || error
+varnishd -d -n "/tmp/syntax-check-$NOW" -f $FILE < /dev/null || error
 
 echo -e "\n@@@ Loading new VCL file:"
 varnishadm -T $HOSTPORT vcl.load reload$NOW $FILE || error
