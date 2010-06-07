@@ -2,8 +2,8 @@
 
 == Class: varnish
 
-Installs the varnish http accelerator and starts the varnishd and varnishlog
-services.
+Installs the varnish http accelerator and stops the varnishd and varnishlog
+services, because they are handled separately by varnish::instance.
 
 */
 class varnish {
@@ -18,9 +18,9 @@ class varnish {
   }
 
   service { "varnishlog":
-    enable  => true,
-    ensure  => "running",
-    pattern => "bin/varnishlog",
+    enable  => false,
+    ensure  => "stopped",
+    pattern => "/var/run/varnishlog.pid",
     require => Package["varnish"],
   }
 

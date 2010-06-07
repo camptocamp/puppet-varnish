@@ -30,6 +30,8 @@ Parameters:
   to 82000.
 - *corelimit*: size of coredumps (ulimit -c). Usually "unlimited" or 0,
   defaults to 0.
+- *varnishlog*: whether a varnishlog instance must be run together with
+  varnishd. defaults to true.
 
 See varnishd(1) and /etc/{default,sysconfig}/varnish for more details.
 
@@ -78,7 +80,8 @@ define varnish::instance($listen_address="",
                          $params=[],
                          $nfiles="131072",
                          $memlock="82000",
-                         $corelimit="0") {
+                         $corelimit="0",
+                         $varnishlog=true) {
 
   # All the startup options are defined in /etc/{default,sysconfig}/varnish-nnn
   file { "varnish-${name} startup config":
@@ -124,12 +127,24 @@ define varnish::instance($listen_address="",
         creates => "/etc/init.d/varnish-${name}",
         require => Package["varnish"],
       }
+
+      exec { "create varnishlog-${name} initscript":
+        command => "sed -r -e 's|(NAME=varnishlog)|\\1-${name}|' -e 's|(/var/log/varnish/varnish.log)|/var/log/varnish/varnish-${name}.log|' /etc/init.d/varnishlog > /etc/init.d/varnishlog-${name}",
+        creates => "/etc/init.d/varnishlog-${name}",
+        require => Package["varnish"],
+      }
     }
 
     RedHat,Fedora,CentOS: {
       exec { "create varnish-${name} initscript":
         command => "sed -r -e 's|(/etc/sysconfig/varnish)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
         creates => "/etc/init.d/varnish-${name}",
+        require => Package["varnish"],
+      }
+
+      exec { "create varnishlog-${name} initscript":
+        command => "sed -r -e 's|(/etc/sysconfig/varnishlog)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnishlog)|\1-${name}|' -e 's|(/var/run/varnishlog.pid)|\\1-${name}|' -e 's|(/var/log/varnish/varnish.log)|/var/log/varnish/varnish-${name}.log|' -e 's|DAEMON_OPTS=\\\"(.*)\\\"|DAEMON_OPTS=\\\"\\1 -n ${name}\\\"|' /etc/init.d/varnishlog > /etc/init.d/varnishlog-${name}",
+        creates => "/etc/init.d/varnishlog-${name}",
         require => Package["varnish"],
       }
     }
@@ -141,6 +156,14 @@ define varnish::instance($listen_address="",
     owner   => "root",
     group   => "root",
     require => Exec["create varnish-${name} initscript"],
+  }
+
+  file { "/etc/init.d/varnishlog-${name}":
+    ensure  => present,
+    mode    => 0755,
+    owner   => "root",
+    group   => "root",
+    require => Exec["create varnishlog-${name} initscript"],
   }
 
   service { "varnish-${name}":
@@ -163,6 +186,26 @@ define varnish::instance($listen_address="",
       Service["varnish"],
       Service["varnishlog"]
     ],
+  }
+
+  if ($varnishlog == true ) {
+
+    service { "varnishlog-${name}":
+      enable  => true,
+      ensure  => running,
+      require => [
+        File["/etc/init.d/varnishlog-${name}"],
+        Service["varnish-${name}"],
+      ],
+    }
+
+  } else {
+
+    service { "varnishlog-${name}":
+      enable  => false,
+      ensure  => stopped,
+      require => File["/etc/init.d/varnishlog-${name}"],
+    }
   }
 
 
