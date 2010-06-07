@@ -110,6 +110,11 @@ define varnish::instance($listen_address="",
     }
   }
 
+  file { "/var/lib/varnish/${name}":
+    ensure => directory,
+    owner  => "root",
+  }
+
   # generate instance initscript by filtering the original one through sed.
   case $operatingsystem {
 
@@ -154,6 +159,7 @@ define varnish::instance($listen_address="",
       File["/etc/init.d/varnish-${name}"],
       File["/usr/local/sbin/vcl-reload.sh"],
       File["varnish-${name} startup config"],
+      File["/var/lib/varnish/${name}"],
       Service["varnish"],
       Service["varnishlog"]
     ],
