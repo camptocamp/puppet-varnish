@@ -5,8 +5,8 @@
 # chkconfig: - 90 10
 # description: Varnish is a high-perfomance HTTP accelerator
 # processname: varnishd
-# config: /etc/sysconfig/varnish
-# pidfile: /var/run/varnish/varnishd.pid
+# config: /etc/sysconfig/varnish-<%= instance %>
+# pidfile: /var/run/varnish/varnishd-<%= instance %>.pid
 
 ### BEGIN INIT INFO
 # Provides: varnish
@@ -21,15 +21,15 @@
 . /etc/init.d/functions
 
 retval=0
-pidfile=/var/run/varnish.pid
+pidfile=/var/run/varnish-<%= instance %>.pid
 
 exec="/usr/sbin/varnishd"
 prog="varnishd"
-config="/etc/sysconfig/varnish"
-lockfile="/var/lock/subsys/varnish"
+config="/etc/sysconfig/varnish-<%= instance %>"
+lockfile="/var/lock/subsys/varnish-<%= instance %>"
 
 # Include varnish defaults
-[ -e /etc/sysconfig/varnish ] && . /etc/sysconfig/varnish
+[ -e /etc/sysconfig/varnish-<%= instance %> ] && . /etc/sysconfig/varnish-<%= instance %>
 
 
 start() {

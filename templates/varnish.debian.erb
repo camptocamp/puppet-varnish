@@ -16,7 +16,7 @@
 # Source function library
 . /lib/lsb/init-functions
 
-NAME=varnishd
+NAME=varnishd-<%= instance %>
 DESC="HTTP accelerator"
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON=/usr/sbin/varnishd
@@ -25,8 +25,8 @@ PIDFILE=/var/run/$NAME.pid
 test -x $DAEMON || exit 0
 
 # Include varnish defaults if available
-if [ -f /etc/default/varnish ] ; then
-        . /etc/default/varnish
+if [ -f /etc/default/varnish-<%= instance %> ] ; then
+        . /etc/default/varnish-<%= instance %>
 fi
 
 # Open files (usually 1024, which is way too small for varnish)

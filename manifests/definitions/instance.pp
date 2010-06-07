@@ -83,106 +83,83 @@ define varnish::instance($listen_address="",
                          $corelimit="0",
                          $varnishlog=true) {
 
+  # use a more comprehensive attribute name for ERB templates.
+  $instance = $name
+
   # All the startup options are defined in /etc/{default,sysconfig}/varnish-nnn
-  file { "varnish-${name} startup config":
+  file { "varnish-${instance} startup config":
     ensure  => present,
     content => template("varnish/varnish.erb"),
     name    => $operatingsystem ? {
-      Debian => "/etc/default/varnish-${name}",
-      Ubuntu => "/etc/default/varnish-${name}",
-      RedHat => "/etc/sysconfig/varnish-${name}",
-      Fedora => "/etc/sysconfig/varnish-${name}",
+      Debian => "/etc/default/varnish-${instance}",
+      Ubuntu => "/etc/default/varnish-${instance}",
+      RedHat => "/etc/sysconfig/varnish-${instance}",
+      Fedora => "/etc/sysconfig/varnish-${instance}",
     },
   }
 
   if ($vcl_file != false) {
-    file { "/etc/varnish/${name}.vcl":
+    file { "/etc/varnish/${instance}.vcl":
       ensure  => present,
       source  => $vcl_file,
-      notify  => Service["varnish-${name}"],
+      notify  => Service["varnish-${instance}"],
       require => Package["varnish"],
     }
   }
 
   if ($vcl_content != false) {
-    file { "/etc/varnish/${name}.vcl":
+    file { "/etc/varnish/${instance}.vcl":
       ensure  => present,
       content => $vcl_content,
-      notify  => Service["varnish-${name}"],
+      notify  => Service["varnish-${instance}"],
       require => Package["varnish"],
     }
   }
 
-  file { "/var/lib/varnish/${name}":
+  file { "/var/lib/varnish/${instance}":
     ensure => directory,
     owner  => "root",
   }
 
-  # generate instance initscript by filtering the original one through sed.
-  case $operatingsystem {
-
-    Debian,Ubuntu: {
-      exec { "create varnish-${name} initscript":
-        command => "sed -r -e 's|(NAME=varnishd)|\\1-${name}|' -e 's|(/etc/default/varnish)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
-        creates => "/etc/init.d/varnish-${name}",
-        require => Package["varnish"],
-      }
-
-      exec { "create varnishlog-${name} initscript":
-        command => "sed -r -e 's|(NAME=varnishlog)|\\1-${name}|' -e 's|(/var/log/varnish/varnish.log)|/var/log/varnish/varnish-${name}.log|' /etc/init.d/varnishlog > /etc/init.d/varnishlog-${name}",
-        creates => "/etc/init.d/varnishlog-${name}",
-        require => Package["varnish"],
-      }
-    }
-
-    RedHat,Fedora,CentOS: {
-      exec { "create varnish-${name} initscript":
-        command => "sed -r -e 's|(/etc/sysconfig/varnish)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
-        creates => "/etc/init.d/varnish-${name}",
-        require => Package["varnish"],
-      }
-
-      exec { "create varnishlog-${name} initscript":
-        command => "sed -r -e 's|(/etc/sysconfig/varnishlog)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnishlog)|\1-${name}|' -e 's|(/var/run/varnishlog.pid)|\\1-${name}|' -e 's|(/var/log/varnish/varnish.log)|/var/log/varnish/varnish-${name}.log|' -e 's|DAEMON_OPTS=\\\"(.*)\\\"|DAEMON_OPTS=\\\"\\1 -n ${name}\\\"|' /etc/init.d/varnishlog > /etc/init.d/varnishlog-${name}",
-        creates => "/etc/init.d/varnishlog-${name}",
-        require => Package["varnish"],
-      }
-    }
-  }
-
-  file { "/etc/init.d/varnish-${name}":
+  file { "/etc/init.d/varnish-${instance}":
     ensure  => present,
     mode    => 0755,
     owner   => "root",
     group   => "root",
-    require => Exec["create varnish-${name} initscript"],
+    content => $operatingsystem ? {
+      Debian => template("varnish/varnish.debian.erb"),
+      Ubuntu => template("varnish/varnish.debian.erb"),
+      RedHat => template("varnish/varnish.redhat.erb"),
+      CentOS => template("varnish/varnish.redhat.erb"),
+      Fedora => template("varnish/varnish.redhat.erb"),
+    },
   }
 
-  file { "/etc/init.d/varnishlog-${name}":
+  file { "/etc/init.d/varnishlog-${instance}":
     ensure  => present,
     mode    => 0755,
     owner   => "root",
     group   => "root",
-    require => Exec["create varnishlog-${name} initscript"],
+    content => $operatingsystem ? {
+      Debian => template("varnish/varnishlog.debian.erb"),
+      Ubuntu => template("varnish/varnishlog.debian.erb"),
+      RedHat => template("varnish/varnishlog.redhat.erb"),
+      CentOS => template("varnish/varnishlog.redhat.erb"),
+      Fedora => template("varnish/varnishlog.redhat.erb"),
+    },
   }
 
-  service { "varnish-${name}":
+  service { "varnish-${instance}":
     enable  => true,
     ensure  => running,
-    pattern => $operatingsystem ? {
-      Debian => "/var/run/varnishd-${name}.pid",
-      Ubuntu => "/var/run/varnishd-${name}.pid",
-      RedHat => "/var/run/varnish.pid-${name}",
-      Fedora => "/var/run/varnish.pid-${name}",
-      CentOS => "/var/run/varnish.pid-${name}",
-    }, 
+    pattern => "/var/run/varnishd-${instance}.pid",
     # reload VCL file when changed, without restarting the varnish service.
-    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${name}.vcl",
+    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl",
     require => [
-      File["/etc/init.d/varnish-${name}"],
+      File["/etc/init.d/varnish-${instance}"],
       File["/usr/local/sbin/vcl-reload.sh"],
-      File["varnish-${name} startup config"],
-      File["/var/lib/varnish/${name}"],
+      File["varnish-${instance} startup config"],
+      File["/var/lib/varnish/${instance}"],
       Service["varnish"],
       Service["varnishlog"]
     ],
@@ -190,23 +167,22 @@ define varnish::instance($listen_address="",
 
   if ($varnishlog == true ) {
 
-    service { "varnishlog-${name}":
+    service { "varnishlog-${instance}":
       enable  => true,
       ensure  => running,
       require => [
-        File["/etc/init.d/varnishlog-${name}"],
-        Service["varnish-${name}"],
+        File["/etc/init.d/varnishlog-${instance}"],
+        Service["varnish-${instance}"],
       ],
     }
 
   } else {
 
-    service { "varnishlog-${name}":
+    service { "varnishlog-${instance}":
       enable  => false,
       ensure  => stopped,
-      require => File["/etc/init.d/varnishlog-${name}"],
+      require => File["/etc/init.d/varnishlog-${instance}"],
     }
   }
-
 
 }
