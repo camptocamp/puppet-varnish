@@ -22,9 +22,23 @@ class varnish::nagiosplugin {
     $nagios_plugin_dir = "/usr/lib/nagios/plugins/contrib"
   }
 
-  $rev = "3305"
-  $branch = "2.0"
-  $baseurl = "http://varnish-cache.org/svn/branches/"
+  $baseurl = "http://varnish-cache.org/svn/"
+
+  case $varnish_version {
+    "2.1.1", "2.1.2": {
+      # http://www.varnish-cache.org/ticket/710
+      $rev = "4009"
+    }
+    default: {
+      $rev = "HEAD"
+    }
+  }
+
+  if ($rev != "HEAD") {
+    $branch = "tags/varnish-${varnish_version}"
+  } else {
+    $branch = "trunk"
+  }
 
   package { "varnish-dev":
     ensure => present,
@@ -34,7 +48,7 @@ class varnish::nagiosplugin {
     },
   }
 
-  vcsrepo { "/usr/src/check_varnish-${rev}":
+  vcsrepo { "/usr/src/check_varnish-${varnish_version}-${rev}":
     provider => "svn",
     source   => "${baseurl}/${branch}/varnish-tools/nagios/",
     revision => $rev,
@@ -42,13 +56,13 @@ class varnish::nagiosplugin {
 
   exec { "build check_varnish":
     command => "./autogen.sh && ./configure && make",
-    cwd     => "/usr/src/check_varnish-${rev}",
-    creates => "/usr/src/check_varnish-${rev}/check_varnish",
+    cwd     => "/usr/src/check_varnish-${varnish_version}-${rev}",
+    creates => "/usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
     require => [
       Package["gcc"],
       Package["libtool"],
       Package["varnish-dev"],
-      Vcsrepo["/usr/src/check_varnish-${rev}"],
+      Vcsrepo["/usr/src/check_varnish-${varnish_version}-${rev}"],
     ],
   }
 
@@ -56,7 +70,7 @@ class varnish::nagiosplugin {
     ensure  => present,
     mode    => 0755,
     owner   => "root",
-    source  => "file:///usr/src/check_varnish-${rev}/check_varnish",
+    source  => "file:///usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
     require => Exec["build check_varnish"],
   }
 }
