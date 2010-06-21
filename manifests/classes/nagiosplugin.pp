@@ -34,9 +34,10 @@ class varnish::nagiosplugin {
     },
   }
 
-  exec { "checkout check_varnish from svn":
-    command => "svn checkout -r${rev} ${baseurl}/${branch}/varnish-tools/nagios/ /usr/src/check_varnish-${rev}",
-    creates => "/usr/src/check_varnish-${rev}",
+  vcsrepo { "/usr/src/check_varnish-${rev}":
+    provider => "svn",
+    source   => "${baseurl}/${branch}/varnish-tools/nagios/",
+    revision => $rev,
   }
 
   exec { "build check_varnish":
@@ -47,7 +48,7 @@ class varnish::nagiosplugin {
       Package["gcc"],
       Package["libtool"],
       Package["varnish-dev"],
-      Exec["checkout check_varnish from svn"],
+      Vcsrepo["/usr/src/check_varnish-${rev}"],
     ],
   }
 
