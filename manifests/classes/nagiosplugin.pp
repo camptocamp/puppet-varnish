@@ -10,6 +10,8 @@ Attributes:
   installed. Defaults to "/usr/lib/nagios/plugins/contrib".
 
 Requires:
+- vcsrepo module from http://github.com/reductivelabs/puppet-vcsrepo
+
 - Package["gcc"]
 - Package["libtool"]
 or
