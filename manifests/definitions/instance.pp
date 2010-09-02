@@ -8,8 +8,8 @@ at http://varnish.projects.linpro.no/wiki/Introduction for more details.
 
 
 Parameters:
-- *listen_address*: address of varnish's http service, defaults to all interfaces.
-- *listen_port*: port varnish's http service must listen to, defaults to 6081.
+- *address*: array of ip + port which varnish's http service should bindto,
+  defaults to all interfaces on port 80.
 - *admin_address*: address of varnish's admin console, defaults to localhost.
 - *admin_port*: port of varnish's admin console, defaults to 6082.
 - *backend*: location of the backend, in the "address:port" format. This is
@@ -49,27 +49,24 @@ Example usage:
   include varnish
 
   varnish::instance { "foo":
-    backend        => "10.0.0.2:8080",
-    listen_address => "192.168.1.10",
-    listen_port    => "80",
-    admin_port     => "6082",
-    storage_size   => "5G",
-    params         => ["thread_pool_min=1",
-                       "thread_pool_max=1000",
-                       "thread_pool_timeout=120"],
+    backend      => "10.0.0.2:8080",
+    address      => ["192.168.1.10:80"],
+    admin_port   => "6082",
+    storage_size => "5G",
+    params       => ["thread_pool_min=1",
+                     "thread_pool_max=1000",
+                     "thread_pool_timeout=120"],
   }
 
   varnish::instance { "bar":
-    listen_address => "192.168.1.11",
-    listen_port    => "80",
-    admin_port     => "6083",
-    vcl_file       => "puppet:///barproject/varnish.vcl",
-    corelimit      => "unlimited",
+    address    => ["192.168.1.11:80"],
+    admin_port => "6083",
+    vcl_file   => "puppet:///barproject/varnish.vcl",
+    corelimit  => "unlimited",
   }
 
 */
-define varnish::instance($listen_address="",
-                         $listen_port="6081",
+define varnish::instance($address=[":80"],
                          $admin_address="localhost",
                          $admin_port="6082",
                          $backend=false,
