@@ -149,7 +149,7 @@ define varnish::instance($address=[":80"],
   service { "varnish-${instance}":
     enable  => true,
     ensure  => running,
-    pattern => "/var/run/varnishd-${instance}.pid",
+    pattern => "/var/run/varnish-${instance}.pid",
     # reload VCL file when changed, without restarting the varnish service.
     restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl",
     require => [
