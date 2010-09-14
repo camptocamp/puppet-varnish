@@ -27,8 +27,8 @@ class varnish::nagiosplugin {
   $baseurl = "http://varnish-cache.org/svn/"
 
   case $varnish_version {
-    "2.1.1", "2.1.2": {
-      # http://www.varnish-cache.org/ticket/710
+    "2.1.1", "2.1.2", "2.1.3": {
+      # http://www.varnish-cache.org/trac/ticket/710
       $rev = "4009"
     }
     default: {
