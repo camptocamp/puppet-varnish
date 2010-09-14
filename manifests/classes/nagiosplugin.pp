@@ -24,22 +24,22 @@ class varnish::nagiosplugin {
     $nagios_plugin_dir = "/usr/lib/nagios/plugins/contrib"
   }
 
-  $baseurl = "http://varnish-cache.org/svn/"
+  $baseurl = "http://www.varnish-cache.org/svn/"
 
   case $varnish_version {
-    "2.1.1", "2.1.2", "2.1.3": {
+    "2.1.1", "2.1.2": {
       # http://www.varnish-cache.org/trac/ticket/710
       $rev = "4009"
+      $branch = "tags/varnish-${varnish_version}"
+    }
+    "2.1.3": {
+      $rev = "4009"
+      $branch = "branches/2.1"
     }
     default: {
       $rev = "HEAD"
+      $branch = "trunk"
     }
-  }
-
-  if ($rev != "HEAD") {
-    $branch = "tags/varnish-${varnish_version}"
-  } else {
-    $branch = "trunk"
   }
 
   package { "varnish-dev":
@@ -57,7 +57,7 @@ class varnish::nagiosplugin {
   }
 
   exec { "build check_varnish":
-    command => "./autogen.sh && ./configure && make",
+    command => "./autogen.sh && ./configure && make VARNISHAPI_LIBS='-lvarnishapi -lvarnish -lvarnishcompat'",
     cwd     => "/usr/src/check_varnish-${varnish_version}-${rev}",
     creates => "/usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
     require => [
