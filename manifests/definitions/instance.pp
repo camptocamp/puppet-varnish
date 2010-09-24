@@ -88,10 +88,8 @@ define varnish::instance($address=[":80"],
     ensure  => present,
     content => template("varnish/varnish.erb"),
     name    => $operatingsystem ? {
-      Debian => "/etc/default/varnish-${instance}",
-      Ubuntu => "/etc/default/varnish-${instance}",
-      RedHat => "/etc/sysconfig/varnish-${instance}",
-      Fedora => "/etc/sysconfig/varnish-${instance}",
+      /Debian|Ubuntu|kFreeBSD/ => "/etc/default/varnish-${instance}",
+      /RedHat|Fedora|CentOS/   => "/etc/sysconfig/varnish-${instance}",
     },
   }
 
@@ -124,11 +122,8 @@ define varnish::instance($address=[":80"],
     owner   => "root",
     group   => "root",
     content => $operatingsystem ? {
-      Debian => template("varnish/varnish.debian.erb"),
-      Ubuntu => template("varnish/varnish.debian.erb"),
-      RedHat => template("varnish/varnish.redhat.erb"),
-      CentOS => template("varnish/varnish.redhat.erb"),
-      Fedora => template("varnish/varnish.redhat.erb"),
+      /Debian|Ubuntu|kFreeBSD/ => template("varnish/varnish.debian.erb"),
+      /RedHat|Fedora|CentOS/   => template("varnish/varnish.redhat.erb"),
     },
   }
 
@@ -138,11 +133,8 @@ define varnish::instance($address=[":80"],
     owner   => "root",
     group   => "root",
     content => $operatingsystem ? {
-      Debian => template("varnish/varnishlog.debian.erb"),
-      Ubuntu => template("varnish/varnishlog.debian.erb"),
-      RedHat => template("varnish/varnishlog.redhat.erb"),
-      CentOS => template("varnish/varnishlog.redhat.erb"),
-      Fedora => template("varnish/varnishlog.redhat.erb"),
+      /Debian|Ubuntu|kFreeBSD/ => template("varnish/varnishlog.debian.erb"),
+      /RedHat|Fedora|CentOS/   => template("varnish/varnishlog.redhat.erb"),
     },
   }
 
