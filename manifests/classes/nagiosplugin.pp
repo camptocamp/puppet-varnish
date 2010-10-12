@@ -31,14 +31,22 @@ class varnish::nagiosplugin {
       # http://www.varnish-cache.org/trac/ticket/710
       $rev = "4009"
       $branch = "tags/varnish-${varnish_version}"
+      $buildopt = ""
     }
     "2.1.3": {
       $rev = "4009"
       $branch = "branches/2.1"
+      $buildopt = "VARNISHAPI_LIBS='-lvarnishapi -lvarnish -lvarnishcompat'"
+    }
+    /^2\.0\./: {
+      $rev = "3305"
+      $branch = "tags/varnish-${varnish_version}"
+      $buildopt = ""
     }
     default: {
       $rev = "HEAD"
       $branch = "trunk"
+      $buildopt = ""
     }
   }
 
@@ -57,7 +65,7 @@ class varnish::nagiosplugin {
   }
 
   exec { "build check_varnish":
-    command => "./autogen.sh && ./configure && make VARNISHAPI_LIBS='-lvarnishapi -lvarnish -lvarnishcompat'",
+    command => "./autogen.sh && ./configure && make ${buildopt}",
     cwd     => "/usr/src/check_varnish-${varnish_version}-${rev}",
     creates => "/usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
     require => [
