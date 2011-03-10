@@ -8,8 +8,8 @@ at http://varnish.projects.linpro.no/wiki/Introduction for more details.
 
 
 Parameters:
-- *listen_address*: address of varnish's http service, defaults to all interfaces.
-- *listen_port*: port varnish's http service must listen to, defaults to 6081.
+- *address*: array of ip + port which varnish's http service should bindto,
+  defaults to all interfaces on port 80.
 - *admin_address*: address of varnish's admin console, defaults to localhost.
 - *admin_port*: port of varnish's admin console, defaults to 6082.
 - *backend*: location of the backend, in the "address:port" format. This is
@@ -28,6 +28,8 @@ Parameters:
   to 82000.
 - *corelimit*: size of coredumps (ulimit -c). Usually "unlimited" or 0,
   defaults to 0.
+- *varnishlog*: whether a varnishlog instance must be run together with
+  varnishd. defaults to true.
 
 See varnishd(1) and /etc/{default,sysconfig}/varnish for more details.
 
@@ -45,28 +47,25 @@ Example usage:
   include varnish
 
   varnish::instance { "foo":
-    backend        => "10.0.0.2:8080",
-    listen_address => "192.168.1.10",
-    listen_port    => "80",
-    admin_port     => "6082",
+    backend      => "10.0.0.2:8080",
+    address      => ["192.168.1.10:80"],
+    admin_port   => "6082",
     storage        => ["file,/var/varnish/storage1.bin,90%",
                        "file,/var/varnish/storage2.bin,90%"],
-    params         => ["thread_pool_min=1",
-                       "thread_pool_max=1000",
-                       "thread_pool_timeout=120"],
+    params       => ["thread_pool_min=1",
+                     "thread_pool_max=1000",
+                     "thread_pool_timeout=120"],
   }
 
   varnish::instance { "bar":
-    listen_address => "192.168.1.11",
-    listen_port    => "80",
-    admin_port     => "6083",
-    vcl_file       => "puppet:///barproject/varnish.vcl",
-    corelimit      => "unlimited",
+    address    => ["192.168.1.11:80"],
+    admin_port => "6083",
+    vcl_file   => "puppet:///barproject/varnish.vcl",
+    corelimit  => "unlimited",
   }
 
 */
-define varnish::instance($listen_address="",
-                         $listen_port="6081",
+define varnish::instance($address=[":80"],
                          $admin_address="localhost",
                          $admin_port="6082",
                          $backend=false,
@@ -76,86 +75,101 @@ define varnish::instance($listen_address="",
                          $params=[],
                          $nfiles="131072",
                          $memlock="82000",
-                         $corelimit="0") {
+                         $corelimit="0",
+                         $varnishlog=true) {
+
+  # use a more comprehensive attribute name for ERB templates.
+  $instance = $name
 
   # All the startup options are defined in /etc/{default,sysconfig}/varnish-nnn
-  file { "varnish-${name} startup config":
+  file { "varnish-${instance} startup config":
     ensure  => present,
     content => template("varnish/varnish.erb"),
     name    => $operatingsystem ? {
-      Debian => "/etc/default/varnish-${name}",
-      Ubuntu => "/etc/default/varnish-${name}",
-      RedHat => "/etc/sysconfig/varnish-${name}",
-      Fedora => "/etc/sysconfig/varnish-${name}",
+      /Debian|Ubuntu|kFreeBSD/ => "/etc/default/varnish-${instance}",
+      /RedHat|Fedora|CentOS/   => "/etc/sysconfig/varnish-${instance}",
     },
   }
 
   if ($vcl_file != false) {
-    file { "/etc/varnish/${name}.vcl":
+    file { "/etc/varnish/${instance}.vcl":
       ensure  => present,
       source  => $vcl_file,
-      notify  => Service["varnish-${name}"],
+      notify  => Service["varnish-${instance}"],
       require => Package["varnish"],
     }
   }
 
   if ($vcl_content != false) {
-    file { "/etc/varnish/${name}.vcl":
+    file { "/etc/varnish/${instance}.vcl":
       ensure  => present,
       content => $vcl_content,
-      notify  => Service["varnish-${name}"],
+      notify  => Service["varnish-${instance}"],
       require => Package["varnish"],
     }
   }
 
-  # generate instance initscript by filtering the original one through sed.
-  case $operatingsystem {
-
-    Debian,Ubuntu: {
-      exec { "create varnish-${name} initscript":
-        command => "sed -r -e 's|(NAME=varnishd)|\\1-${name}|' -e 's|(^#\\s+Provides:\\s+varnish)$|\\1-${name}|' -e 's|(/etc/default/varnish)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
-        creates => "/etc/init.d/varnish-${name}",
-        require => Package["varnish"],
-      }
-    }
-
-    RedHat,Fedora,CentOS: {
-      exec { "create varnish-${name} initscript":
-        command => "sed -r -e 's|(/etc/sysconfig/varnish)|\\1-${name}|g' -e 's|(/var/lock/subsys/varnish)|\1-${name}|' -e 's|(/var/run/varnish.pid)|\\1-${name}|' /etc/init.d/varnish > /etc/init.d/varnish-${name}",
-        creates => "/etc/init.d/varnish-${name}",
-        require => Package["varnish"],
-      }
-    }
+  file { "/var/lib/varnish/${instance}":
+    ensure => directory,
+    owner  => "root",
   }
 
-  file { "/etc/init.d/varnish-${name}":
+  file { "/etc/init.d/varnish-${instance}":
     ensure  => present,
     mode    => 0755,
     owner   => "root",
     group   => "root",
-    require => Exec["create varnish-${name} initscript"],
+    content => $operatingsystem ? {
+      /Debian|Ubuntu|kFreeBSD/ => template("varnish/varnish.debian.erb"),
+      /RedHat|Fedora|CentOS/   => template("varnish/varnish.redhat.erb"),
+    },
   }
 
-  service { "varnish-${name}":
+  file { "/etc/init.d/varnishlog-${instance}":
+    ensure  => present,
+    mode    => 0755,
+    owner   => "root",
+    group   => "root",
+    content => $operatingsystem ? {
+      /Debian|Ubuntu|kFreeBSD/ => template("varnish/varnishlog.debian.erb"),
+      /RedHat|Fedora|CentOS/   => template("varnish/varnishlog.redhat.erb"),
+    },
+  }
+
+  service { "varnish-${instance}":
     enable  => true,
     ensure  => running,
-    pattern => $operatingsystem ? {
-      Debian => "/var/run/varnishd-${name}.pid",
-      Ubuntu => "/var/run/varnishd-${name}.pid",
-      RedHat => "/var/run/varnish.pid-${name}",
-      Fedora => "/var/run/varnish.pid-${name}",
-      CentOS => "/var/run/varnish.pid-${name}",
-    }, 
+    pattern => "/var/run/varnish-${instance}.pid",
     # reload VCL file when changed, without restarting the varnish service.
-    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${name}.vcl",
+    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl",
     require => [
-      File["/etc/init.d/varnish-${name}"],
+      File["/etc/init.d/varnish-${instance}"],
       File["/usr/local/sbin/vcl-reload.sh"],
-      File["varnish-${name} startup config"],
+      File["varnish-${instance} startup config"],
+      File["/var/lib/varnish/${instance}"],
       Service["varnish"],
       Service["varnishlog"]
     ],
   }
 
+  if ($varnishlog == true ) {
+
+    service { "varnishlog-${instance}":
+      enable  => true,
+      ensure  => running,
+      require => [
+        File["/etc/init.d/varnishlog-${instance}"],
+        Service["varnish-${instance}"],
+      ],
+    }
+
+  } else {
+
+    service { "varnishlog-${instance}":
+      enable  => false,
+      ensure  => stopped,
+      require => File["/etc/init.d/varnishlog-${instance}"],
+    }
+  }
 
 }

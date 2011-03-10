@@ -34,7 +34,7 @@ ulimit -S -c $DAEMON_COREFILE_LIMIT
 
 DAEMON_OPTS="-n <%= name %> \
              -u varnish -g varnish \
-             -a <%= listen_address %>:<%= listen_port %> \
+             -a <%= address.join(',') %> \
              -T <%= admin_address %>:<%= admin_port %> \
 <% if storage == [] -%>
              -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,1G \
