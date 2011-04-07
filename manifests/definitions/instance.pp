@@ -112,6 +112,7 @@ define varnish::instance($address=[":80"],
   file { "/var/lib/varnish/${instance}":
     ensure => directory,
     owner  => "root",
+    require => Package["varnish"],
   }
 
   file { "/etc/init.d/varnish-${instance}":
