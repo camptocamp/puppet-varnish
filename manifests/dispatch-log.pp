@@ -25,7 +25,7 @@ class varnish::dispatch-log {
     mode   => 0755,
     group  => root,
     owner  => root,
-    source => "puppet:///varnish/usr/local/bin/dispatch-log",
+    source => "puppet:///modules/varnish/usr/local/bin/dispatch-log",
   }
 
   file {"/etc/init.d/dispatch-log":
@@ -33,7 +33,7 @@ class varnish::dispatch-log {
     mode   => 0755,
     group  => root,
     owner  => root,
-    source => "puppet:///varnish/etc/init.d/dispatch-log",
+    source => "puppet:///modules/varnish/etc/init.d/dispatch-log",
   }
 
   service { "dispatch-log":

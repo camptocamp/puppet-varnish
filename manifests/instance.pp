@@ -60,7 +60,7 @@ Example usage:
   varnish::instance { "bar":
     address    => ["192.168.1.11:80"],
     admin_port => "6083",
-    vcl_file   => "puppet:///barproject/varnish.vcl",
+    vcl_file   => "puppet:///modules/barproject/varnish.vcl",
     corelimit  => "unlimited",
   }
 

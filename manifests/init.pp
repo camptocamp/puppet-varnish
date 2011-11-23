@@ -29,7 +29,7 @@ class varnish {
     owner  => "root",
     group  => "root",
     mode   => "0755",
-    source => "puppet:///varnish/usr/local/sbin/vcl-reload.sh",
+    source => "puppet:///modules/varnish/usr/local/sbin/vcl-reload.sh",
   }
 
   case $operatingsystem { 
