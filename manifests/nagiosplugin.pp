@@ -24,7 +24,7 @@ class varnish::nagiosplugin {
     $nagios_plugin_dir = "/usr/lib/nagios/plugins/contrib"
   }
 
-  $baseurl = "http://www.varnish-cache.org/svn/"
+  $baseurl = "https://www.varnish-cache.org/svn/"
 
   case $varnish_version {
     "2.1.1", "2.1.2": {
@@ -39,8 +39,8 @@ class varnish::nagiosplugin {
       $buildopt = "VARNISHAPI_LIBS='-lvarnishapi -lvarnish -lvarnishcompat'"
     }
     /^2\.0\./: {
-      $rev = "3305"
-      $branch = "tags/varnish-${varnish_version}"
+      $rev = "5773"
+      $branch = "branches/2.0"
       $buildopt = ""
     }
     default: {
@@ -60,7 +60,7 @@ class varnish::nagiosplugin {
 
   vcsrepo { "/usr/src/check_varnish-${varnish_version}-${rev}":
     provider => "svn",
-    source   => "${baseurl}/${branch}/varnish-tools/nagios/",
+    source   => "${baseurl}${branch}/varnish-tools/nagios/",
     revision => $rev,
   }
 
