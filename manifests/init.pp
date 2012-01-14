@@ -8,8 +8,8 @@ services, because they are handled separately by varnish::instance.
 */
 class varnish {
 
-  yumrepo { "varnish-cache":
-    name     => 'Varnish 3.0 for Enterprise Linux 5 - $basearch',
+  yumrepo { "varnish":
+    descr    => 'Varnish 3.0 for Enterprise Linux 5 - $basearch',
     baseurl  => 'http://repo.varnish-cache.org/redhat/varnish-3.0/el5/$basearch',
     enabled  => "1",
     gpgcheck => "0"
@@ -17,7 +17,7 @@ class varnish {
 
   package { "varnish":
     ensure => latest,
-    require => Yumrepo["varnish-cache"]
+    require => Yumrepo["varnish"]
   }
 
   service { "varnish":
