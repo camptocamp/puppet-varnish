@@ -156,9 +156,11 @@ define varnish::instance($address=[":80"],
   if ($varnishlog == true ) {
 
     service { "varnishlog-${instance}":
-      enable  => true,
-      ensure  => running,
-      require => [
+      enable    => true,
+      ensure    => running,
+      pattern   => "/var/run/varnishlog-${instance}.pid",
+      hasstatus => false,
+      require   => [
         File["/etc/init.d/varnishlog-${instance}"],
         Service["varnish-${instance}"],
       ],
@@ -167,9 +169,11 @@ define varnish::instance($address=[":80"],
   } else {
 
     service { "varnishlog-${instance}":
-      enable  => false,
-      ensure  => stopped,
-      require => File["/etc/init.d/varnishlog-${instance}"],
+      enable    => false,
+      ensure    => stopped,
+      pattern   => "/var/run/varnishlog-${instance}.pid",
+      hasstatus => false,
+      require   => File["/etc/init.d/varnishlog-${instance}"],
     }
   }
 

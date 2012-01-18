@@ -11,17 +11,19 @@ class varnish {
   package { "varnish": ensure => present }
 
   service { "varnish":
-    enable  => false,
-    ensure  => "stopped",
-    pattern => "/var/run/varnishd.pid",
-    require => Package["varnish"],
+    enable    => false,
+    ensure    => "stopped",
+    pattern   => "/var/run/varnishd.pid",
+    hasstatus => false,
+    require   => Package["varnish"],
   }
 
   service { "varnishlog":
-    enable  => false,
-    ensure  => "stopped",
-    pattern => "/var/run/varnishlog.pid",
-    require => Package["varnish"],
+    enable    => false,
+    ensure    => "stopped",
+    pattern   => "/var/run/varnishlog.pid",
+    hasstatus => false,
+    require   => Package["varnish"],
   }
 
   file { "/usr/local/sbin/vcl-reload.sh":
