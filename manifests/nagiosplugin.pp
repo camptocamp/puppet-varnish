@@ -20,6 +20,8 @@ or
 */
 class varnish::nagiosplugin {
 
+  include varnish::dev
+
   if ( ! $nagios_plugin_dir ) {
     $nagios_plugin_dir = "/usr/lib/nagios/plugins/contrib"
   }
@@ -50,37 +52,39 @@ class varnish::nagiosplugin {
     }
   }
 
-  package { "varnish-dev":
-    ensure => present,
-    name => $operatingsystem ? {
-      Debian => "libvarnish-dev",
-      RedHat => "varnish-libs-devel",
-    },
-  }
+  $workdir = "/usr/src/check_varnish-${varnish_version}-${rev}"
 
-  vcsrepo { "/usr/src/check_varnish-${varnish_version}-${rev}":
+  vcsrepo { $workdir:
     provider => "svn",
     source   => "${baseurl}${branch}/varnish-tools/nagios/",
     revision => $rev,
   }
 
-  exec { "build check_varnish":
-    command => "./autogen.sh && ./configure && make ${buildopt}",
-    cwd     => "/usr/src/check_varnish-${varnish_version}-${rev}",
-    creates => "/usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
+  file { "${workdir}/build-plugin.sh":
+    mode    => 0755,
+    content => "#!/bin/sh
+cd \$(dirname \$0) && ./autogen.sh && ./configure && make ${buildopt}
+",
     require => [
       Package["gcc"],
       Package["libtool"],
-      Package["varnish-dev"],
-      Vcsrepo["/usr/src/check_varnish-${varnish_version}-${rev}"],
+      Class["varnish::dev"],
+      Vcsrepo[$workdir],
     ],
+  }
+
+  exec { "build check_varnish":
+    command   => "${workdir}/build-plugin.sh",
+    creates   => "${workdir}/check_varnish",
+    require   => File["${workdir}/build-plugin.sh"],
+    #logoutput => true,
   }
 
   file { "${nagios_plugin_dir}/check_varnish":
     ensure  => present,
     mode    => 0755,
     owner   => "root",
-    source  => "file:///usr/src/check_varnish-${varnish_version}-${rev}/check_varnish",
+    source  => "file://${workdir}/check_varnish",
     require => Exec["build check_varnish"],
   }
 }
