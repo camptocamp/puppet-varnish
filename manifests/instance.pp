@@ -30,6 +30,7 @@ Parameters:
   defaults to 0.
 - *varnishlog*: whether a varnishlog instance must be run together with
   varnishd. defaults to true.
+- *secret*: location of the secret file, defaults to none.
 
 See varnishd(1) and /etc/{default,sysconfig}/varnish for more details.
 
@@ -55,6 +56,7 @@ Example usage:
     params       => ["thread_pool_min=1",
                      "thread_pool_max=1000",
                      "thread_pool_timeout=120"],
+    secret       => "/etc/varnish/secret",
   }
 
   varnish::instance { "bar":
@@ -76,7 +78,8 @@ define varnish::instance($address=[":80"],
                          $nfiles="131072",
                          $memlock="82000",
                          $corelimit="0",
-                         $varnishlog=true) {
+                         $varnishlog=true,
+			 $secret=false) {
 
   # use a more comprehensive attribute name for ERB templates.
   $instance = $name

@@ -49,6 +49,9 @@ DAEMON_OPTS="-n <%= name %> \
 <% if backend != false -%>
              -b <%= backend %> \
 <% end -%>
+<% if secret != false -%>
+             -S <%= secret %> \
+<% end -%> 
 <% params.each do |param| -%>
              -p <%= param %> \
 <% end -%>
