@@ -30,6 +30,7 @@ Parameters:
   defaults to 0.
 - *varnishlog*: whether a varnishlog instance must be run together with
   varnishd. defaults to true.
+- *secret*: location of the secret file, defaults to none.
 
 See varnishd(1) and /etc/{default,sysconfig}/varnish for more details.
 
