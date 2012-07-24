@@ -35,7 +35,7 @@ class varnish {
   }
 
   case $operatingsystem { 
-    RedHat,CentOS: {
+    RedHat,CentOS,Amazon: {
       # By default RPM package fail to send HUP to varnishlog process, and don't
       # bother compressing rotated files. This fixes these issues, waiting for
       # this bug to get corrected upstream:
