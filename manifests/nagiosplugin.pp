@@ -26,38 +26,38 @@ class varnish::nagiosplugin {
     $nagios_plugin_dir = "/usr/lib/nagios/plugins/contrib"
   }
 
-  $baseurl = "https://www.varnish-cache.org/svn/"
+  $baseurl = 'https://github.com/varnish/varnish-nagios'
 
   case $varnish_version {
     "2.1.1", "2.1.2": {
       # http://www.varnish-cache.org/trac/ticket/710
-      $rev = "4009"
-      $branch = "tags/varnish-${varnish_version}"
+      $revision = '70e4ded1221846d4149dd743e2ac634946c313ad'
+      $branch   = 'master'
       $buildopt = ""
     }
     "2.1.3": {
-      $rev = "4009"
-      $branch = "branches/2.1"
+      $revision = '70e4ded1221846d4149dd743e2ac634946c313ad'
+      $branch   = 'master'
       $buildopt = "VARNISHAPI_LIBS='-lvarnishapi -lvarnish -lvarnishcompat'"
     }
     /^2\.0\./: {
-      $rev = "5773"
-      $branch = "branches/2.0"
+      $revision = 'a64abfb7e70fd1f6b53ff64f9ddeafb7209c0b23'
+      $branch   = 'master'
       $buildopt = ""
     }
     default: {
-      $rev = "HEAD"
-      $branch = "trunk"
+      $revision = 'HEAD'
+      $branch   = 'master'
       $buildopt = ""
     }
   }
 
-  $workdir = "/usr/src/check_varnish-${varnish_version}-${rev}"
+  $workdir = "/usr/src/check_varnish-${varnish_version}-${revision}"
 
   vcsrepo { $workdir:
-    provider => "svn",
-    source   => "${baseurl}${branch}/varnish-tools/nagios/",
-    revision => $rev,
+    provider => 'git',
+    source   => "${baseurl}/",
+    revision => "$revision",
   }
 
   file { "${workdir}/build-plugin.sh":
