@@ -18,6 +18,9 @@ Parameters:
   fileserver (puppet://host/module/path.vcl). This is passed to "varnishd -f".
   Defaults to none.
 - *vcl_content*: content of the instance's VCL file. Defaults to none.
+- *enable_secret*: enable secret file in the instance's configuration. Defaults
+  to false.
+- *secret_file*: path to the secret file to use. Defaults to /etc/varnish/secret.
 - *storage*: array of backend "type[,options]" strings to be passed to "varnishd -s"
   since version 2.0 varnish support multiple storage files
 - *params*: array of "key=value" strings to be passed to "varnishd -p"
