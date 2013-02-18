@@ -46,6 +46,9 @@ DAEMON_OPTS="-n <%= name %> \
 <% if vcl_file or vcl_content -%>
              -f /etc/varnish/<%= name %>.vcl \
 <% end -%>
+<% if enable_secret -%>
+             -S <%= secret_file %> \
+<% end -%>
 <% if backend != false -%>
              -b <%= backend %> \
 <% end -%>
