@@ -147,7 +147,10 @@ define varnish::instance($address=[":80"],
     ensure  => running,
     pattern => "/var/run/varnish-${instance}.pid",
     # reload VCL file when changed, without restarting the varnish service.
-    restart => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl",
+    restart => $enable_secret ? {
+      false => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl",
+      true  => "/usr/local/sbin/vcl-reload.sh /etc/varnish/${instance}.vcl ${secret_file}",
+    },
     require => [
       File["/etc/init.d/varnish-${instance}"],
       File["/usr/local/sbin/vcl-reload.sh"],
