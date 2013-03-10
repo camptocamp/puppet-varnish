@@ -4,13 +4,13 @@
 
 # Original version: http://kristian.blog.linpro.no/2009/02/18/easy-reloading-of-varnish-vcl/
 
-if [ $# -lt 1 ]; then
+if [ $# -lt 1 -o $# -gt 2 ]; then
   echo "Usage: $0 vcl_file [secret_file]"
   exit 1
 fi
 FILE=$1
 
-if [ $# -ge 2 ]; then
+if [ $# -eq 2 ]; then
   SECRET_OPT="-S $2"
 fi
 
