@@ -25,7 +25,9 @@ error()
     echo 1>&2 "Failed to reload $FILE."
     exit 1
 }
-
+# varnishadm from 3.0.5 upstream package does some stuff as "varnish" user…
+chmod 0750 $TMPDIR
+chgrp varnish $TMPDIR
 echo "@@@ Checking VCL file syntax:"
 varnishd -d -s malloc -n "$TMPDIR" -f $FILE < /dev/null || error
 
