@@ -18,18 +18,14 @@ fi
 # (defined in /etc/default/varnish or on startup)
 HOSTPORT="localhost:6082"
 NOW=`date +%F_%T`
-TMPDIR=`mktemp -d`
 
 error()
 {
     echo 1>&2 "Failed to reload $FILE."
     exit 1
 }
-
 echo "@@@ Checking VCL file syntax:"
-varnishd -d -s malloc -n "$TMPDIR" -f $FILE < /dev/null || error
-
-rm -f "$TMPDIR/_.vsm" && rmdir "$TMPDIR"
+varnishd -d -s malloc -f $FILE < /dev/null || error
 
 echo -e "\n@@@ Loading new VCL file:"
 varnishadm $SECRET_OPT -T $HOSTPORT vcl.load reload$NOW $FILE || error
