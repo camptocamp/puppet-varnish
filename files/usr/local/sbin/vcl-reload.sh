@@ -2,7 +2,8 @@
 # Reload a varnish config
 # Author: Kristian Lyngstol
 
-# Original version: http://kristian.blog.linpro.no/2009/02/18/easy-reloading-of-varnish-vcl/
+# Original version: 
+# http://kly.no/posts/2009_02_18__Easy_reloading_of_varnish__VCL__.html
 
 if [ $# -lt 1 -o $# -gt 2 ]; then
   echo "Usage: $0 vcl_file [secret_file]"
@@ -18,6 +19,7 @@ fi
 # (defined in /etc/default/varnish or on startup)
 HOSTPORT="localhost:6082"
 NOW=`date +%F_%T`
+TMPDIR=`mktemp -d`
 
 error()
 {
@@ -25,12 +27,13 @@ error()
     exit 1
 }
 echo "@@@ Checking VCL file syntax:"
-varnishd -d -s malloc -f $FILE < /dev/null || error
+varnishd -d -s malloc -n $TMPDIR -u root -f $FILE < /dev/null || error
 
 echo -e "\n@@@ Loading new VCL file:"
 varnishadm $SECRET_OPT -T $HOSTPORT vcl.load reload$NOW $FILE || error
 varnishadm $SECRET_OPT -T $HOSTPORT vcl.use reload$NOW || error
 
+rm -f "$TMPDIR/_.vsm" && rmdir "$TMPDIR"
 
 echo -e "\n@@@ Currently available VCL configs:"
 varnishadm $SECRET_OPT -T $HOSTPORT vcl.list
