@@ -39,7 +39,7 @@ DAEMON_OPTS="-n <%= name %> \
 <% if storage == [] -%>
              -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,1G \
 <% else -%>
-<% storage.each do |storage| -%>
+<% Array(storage).each do |storage| -%>
              -s <%= storage %> \
 <% end -%>
 <% end -%>
