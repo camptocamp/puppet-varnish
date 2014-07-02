@@ -1,6 +1,6 @@
 {
   "name": "camptocamp-varnish",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Camptocamp",
   "summary": "Puppet Varnish module",
   "license": "Apache 2.0",
