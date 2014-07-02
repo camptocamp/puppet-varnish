@@ -1,0 +1,24 @@
+{
+  "name": "camptocamp-varnish",
+  "version": "0.0.1",
+  "author": "Camptocamp",
+  "summary": "Puppet Varnish module",
+  "license": "Apache 2.0",
+  "source": "https://github.com/camptocamp/puppet-varnish",
+  "project_page": "https://github.com/camptocamp/puppet-varnish",
+  "issues_url": "https://github.com/camptocamp/puppet-varnish/issues",
+  "dependencies": [
+  ],
+  "requirements": [
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5"
+      ]
+    }
+  ],
+  "puppet_version": [
+  ]
+}
