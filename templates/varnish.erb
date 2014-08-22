@@ -10,49 +10,49 @@
 START=yes
 
 # Maximum number of open files (for ulimit -n)
-NFILES="<%= nfiles %>"
+NFILES="<%= @nfiles %>"
 ulimit -n $NFILES
 
 # Maximum locked memory size (for ulimit -l)
 # Used for locking the shared memory log in memory.  If you increase log size,
 # you need to increase this number as well
-MEMLOCK="<%= memlock %>"
+MEMLOCK="<%= @memlock %>"
 ulimit -l $MEMLOCK
 
 # Default varnish instance name is the local nodename.  Can be overridden with
 # the -n switch, to have more instances on a single server.
-INSTANCE="<%= name %>"
+INSTANCE="<%= @name %>"
 
 # Maximum size of corefile (for ulimit -c). Default in Fedora is 0
 # DAEMON_COREFILE_LIMIT="unlimited"
-DAEMON_COREFILE_LIMIT="<%= corelimit %>"
+DAEMON_COREFILE_LIMIT="<%= @corelimit %>"
 ulimit -S -c $DAEMON_COREFILE_LIMIT
 
 
 ## Alternative 4, Do It Yourself
 #
 
-DAEMON_OPTS="-n <%= name %> \
+DAEMON_OPTS="-n <%= @name %> \
              -u varnish -g varnish \
-             -a <%= address.join(',') %> \
-             -T <%= admin_address %>:<%= admin_port %> \
-<% if storage == [] -%>
-             -s file,/var/lib/varnish/<%= name %>/varnish_storage.bin,1G \
+             -a <%= @address.join(',') %> \
+             -T <%= @admin_address %>:<%= @admin_port %> \
+<% if @storage == [] -%>
+             -s file,/var/lib/varnish/<%= @name %>/varnish_storage.bin,1G \
 <% else -%>
-<% Array(storage).each do |storage| -%>
+<% Array(@storage).each do |storage| -%>
              -s <%= storage %> \
 <% end -%>
 <% end -%>
-<% if vcl_file or vcl_content -%>
-             -f /etc/varnish/<%= name %>.vcl \
+<% if @vcl_file or @vcl_content -%>
+             -f /etc/varnish/<%= @name %>.vcl \
 <% end -%>
-<% if enable_secret -%>
-             -S <%= secret_file %> \
+<% if @enable_secret -%>
+             -S <%= @secret_file %> \
 <% end -%>
-<% if backend != false -%>
-             -b <%= backend %> \
+<% if @backend != false -%>
+             -b <%= @backend %> \
 <% end -%>
-<% params.each do |param| -%>
+<% @params.each do |param| -%>
              -p <%= param %> \
 <% end -%>
 "
