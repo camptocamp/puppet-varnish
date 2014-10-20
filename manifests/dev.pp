@@ -1,11 +1,13 @@
 class varnish::dev {
 
-  package { 'varnish-dev':
-    ensure => present,
-    name => $::osfamily ? {
+  $package_name = $::osfamily ? {
       Debian => 'libvarnish-dev',
       RedHat => 'varnish-libs-devel',
     },
+
+  package { 'varnish-dev':
+    ensure => present,
+    name   => $package_name,
   }
 
   # libvarnish-dev is broken on debian-squeeze. This is the workaround.

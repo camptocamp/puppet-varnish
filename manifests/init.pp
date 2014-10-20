@@ -1,37 +1,35 @@
-/*
-
-== Class: varnish
-
-Installs the varnish http accelerator and stops the varnishd and varnishlog
-services, because they are handled separately by varnish::instance.
-
-*/
+#
+# == Class: varnish
+#
+# Installs the varnish http accelerator and stops the varnishd and varnishlog
+# services, because they are handled separately by varnish::instance.
+#
 class varnish {
 
-  package { "varnish": ensure => present }
+  package { 'varnish': ensure => present }
 
-  service { "varnish":
+  service { 'varnish':
+    ensure    => 'stopped',
     enable    => false,
-    ensure    => "stopped",
-    pattern   => "/var/run/varnishd.pid",
+    pattern   => '/var/run/varnishd.pid',
     hasstatus => false,
-    require   => Package["varnish"],
+    require   => Package['varnish'],
   }
 
-  service { "varnishlog":
+  service { 'varnishlog':
+    ensure    => 'stopped',
     enable    => false,
-    ensure    => "stopped",
-    pattern   => "/var/run/varnishlog.pid",
+    pattern   => '/var/run/varnishlog.pid',
     hasstatus => false,
-    require   => Package["varnish"],
+    require   => Package['varnish'],
   }
 
-  file { "/usr/local/sbin/vcl-reload.sh":
+  file { '/usr/local/sbin/vcl-reload.sh':
     ensure => present,
-    owner  => "root",
-    group  => "root",
-    mode   => "0755",
-    source => "puppet:///modules/varnish/usr/local/sbin/vcl-reload.sh",
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+    source => 'puppet:///modules/varnish/usr/local/sbin/vcl-reload.sh',
   }
 
   case $::operatingsystem {

@@ -1,23 +1,22 @@
-/*
-
-== Class: varnish::nagiosplugin
-
-Downloads the sources of the official nagios plugin for varnish, builds it, and
-installs it to $plugin_dir.
-
-Attributes:
-- *nagios_plugin_dir*: directory where you want the built plugin to be
-  installed. Defaults to '/usr/lib/nagios/plugins/contrib'.
-
-Requires:
-- vcsrepo module from http://github.com/reductivelabs/puppet-vcsrepo
-
-- Package['gcc']
-- Package['libtool']
-or
-- Class['buildenv::c']
-
-*/
+#
+# == Class: varnish::nagiosplugin
+#
+# Downloads the sources of the official nagios plugin for varnish, builds it, and
+# installs it to $plugin_dir.
+#
+# Attributes:
+# - *nagios_plugin_dir*: directory where you want the built plugin to be
+#   installed. Defaults to '/usr/lib/nagios/plugins/contrib'.
+#
+# Requires:
+# - vcsrepo module from http://github.com/reductivelabs/puppet-vcsrepo
+#
+# - Package['gcc']
+# - Package['libtool']
+# or
+# - Class['buildenv::c']
+#
+#
 class varnish::nagiosplugin (
   $plugin_dir = '/usr/lib/nagios/plugins/contrib',
 ) {
@@ -72,9 +71,9 @@ cd \$(dirname \$0) && ./autogen.sh && ./configure && make ${buildopt}
   }
 
   exec { 'build check_varnish':
-    command   => "${workdir}/build-plugin.sh",
-    creates   => "${workdir}/check_varnish",
-    require   => File["${workdir}/build-plugin.sh"],
+    command => "${workdir}/build-plugin.sh",
+    creates => "${workdir}/check_varnish",
+    require => File["${workdir}/build-plugin.sh"],
     #logoutput => true,
   }
 
