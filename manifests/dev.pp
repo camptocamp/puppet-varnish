@@ -3,7 +3,7 @@ class varnish::dev {
   $package_name = $::osfamily ? {
       Debian => 'libvarnish-dev',
       RedHat => 'varnish-libs-devel',
-    },
+  }
 
   package { 'varnish-dev':
     ensure => present,
