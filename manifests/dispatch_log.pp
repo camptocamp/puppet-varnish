@@ -1,5 +1,5 @@
 #
-# == Class varnish::dispatch-log
+# == Class varnish::dispatch_log
 #
 # Installs dispatch-log script and set its service
 #
@@ -17,7 +17,7 @@
 # Requires:
 # - Class["varnish"]
 #
-class varnish::dispatch-log {
+class varnish::dispatch_log {
 
   file {'/usr/local/bin/dispatch-log':
     ensure => present,
