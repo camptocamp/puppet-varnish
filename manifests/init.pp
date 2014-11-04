@@ -51,5 +51,7 @@ class varnish {
         require => Package['varnish'],
       }
     }
+
+    default: {}
   }
 }
