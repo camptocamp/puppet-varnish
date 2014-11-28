@@ -7,14 +7,16 @@ class varnish::service {
     ensure => $ensure,
     enable => $::varnish::enable,
   }
-  ->
-  service { 'varnishncsa':
-    ensure => $ensure,
-    enable => $::varnish::enable,
-  }
 
   service { 'varnishlog':
-    ensure => $ensure,
-    enable => $::varnish::enable,
+    ensure  => $ensure,
+    enable  => $::varnish::enable,
+    require => Service['varnish'],
+  }
+
+  service { 'varnishncsa':
+    ensure  => $ensure,
+    enable  => $::varnish::enable,
+    require => Service['varnish'],
   }
 }
