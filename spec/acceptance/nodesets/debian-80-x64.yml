@@ -2,6 +2,8 @@ HOSTS:
   debian-80-x64:
     roles:
       - default
+    default_apply_opts:
+      strict_variables:
     platform: debian-8-amd64
     box : oar-team/debian8
     box_url : http://vagrantcloud.com/oar-team/debian8

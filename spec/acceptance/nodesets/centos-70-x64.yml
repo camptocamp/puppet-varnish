@@ -2,6 +2,8 @@ HOSTS:
   centos-70-x64:
     roles:
       - default
+    default_apply_opts:
+      strict_variables:
     platform: el-7-x86_64
     box : puppetlabs/centos-7.0-64-nocm
     box_url : https://vagrantcloud.com/puppetlabs/centos-7.0-64-nocm

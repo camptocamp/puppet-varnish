@@ -2,6 +2,8 @@ HOSTS:
   debian-73-x64:
     roles:
       - default
+    default_apply_opts:
+      strict_variables:
     platform: debian-7-amd64
     box : debian-73-x64-virtualbox-nocm
     box_url : http://puppet-vagrant-boxes.puppetlabs.com/debian-73-x64-virtualbox-nocm.box
