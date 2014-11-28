@@ -1,4 +1,5 @@
 class varnish::repo(
+  $ensure  = 'present',
   $source  = $::osfamily ? {
     'Debian' => 'varnish-cache',
     'RedHat' => 'varnish-cache',
@@ -16,6 +17,7 @@ class varnish::repo(
         'varnish-cache': {
           include ::apt
           apt::source { 'varnish':
+            ensure     => $ensure,
             location   => 'http://repo.varnish-cache.org/debian',
             repos      => 'varnish-4.0',
             key        => 'C4DEFFEB',
@@ -40,6 +42,7 @@ class varnish::repo(
         }
         'varnish-cache': {
           yumrepo { 'varnish':
+            ensure   => $ensure,
             descr    => 'varnish',
             baseurl  => "http://repo.varnish-cache.org/redhat/varnish-4.0/el${::operatingsystemmajrelease}/\$basearch",
             enabled  => '1',
