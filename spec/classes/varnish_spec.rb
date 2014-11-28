@@ -3,6 +3,7 @@ describe 'varnish' do
   context 'when on RedHat' do
     let (:facts) { {
       :operatingsystem => 'RedHat',
+      :osfamily        => 'Redhat',
     } }
 
     it { should compile.with_all_deps }
