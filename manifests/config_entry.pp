@@ -1,9 +1,10 @@
 define varnish::config_entry(
   $value,
-  $key = $name,
+  $ensure = 'presen',
+  $key    = $name,
 ) {
   shellvar { "varnish_${name}":
-    ensure   => 'present',
+    ensure   => $ensure,
     target   => $::varnish::params_file,
     variable => $key,
     value    => $value,
