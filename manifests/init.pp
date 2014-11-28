@@ -12,6 +12,9 @@ class varnish(
     'RedHat' => '/etc/varnish/varnish.params',
   },
   $start           = true,
+
+  $varnish_listen_address = undef,
+  $varnish_listen_port    = undef,
 ) {
 
   validate_bool($multi_instances)

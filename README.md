@@ -39,6 +39,12 @@ Path of the params file.
 ####`start`
 Should the service be started by Puppet?
 
+####`varnish_listen_address`
+Address to listen clients requests.
+
+####`varnish_listen_port`
+Port to listen clients requests.
+
 Notes
 -----
 

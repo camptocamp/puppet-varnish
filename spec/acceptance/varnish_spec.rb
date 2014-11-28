@@ -91,14 +91,12 @@ describe 'varnish' do
       end
     end
 
-    context 'when changing VARNISH_LISTEN_PORT' do
+    context 'whith varnish_listen_port => 6080' do
       it 'should idempotently run' do
         pp = <<-EOS
         class { 'varnish':
-          multi_instances => false,
-        }
-        varnish::config_entry { 'VARNISH_LISTEN_PORT':
-          value => 6080,
+          multi_instances     => false,
+          varnish_listen_port => 6080,
         }
         EOS
 
