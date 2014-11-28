@@ -18,15 +18,6 @@ class { 'varnish':
 }
 ```
 
-Configure environment params:
-
-```puppet
-varnish::config_entry { 'VARNISH_VCL_CONF':
-  ensure => 'present',
-  value  => '/foo/bar.vcl',
-}
-```
-
 Reference
 ---------
 
@@ -34,17 +25,10 @@ Classes:
 
 * [varnish](#class-varnish)
 
-Resources:
-
-* [varnish::config_entry](#resource-varnishconfig_entry)
-
 ###Class: varnish
 
 ####`enable`
 Should the service be enabled during boot time?
-
-####`config_entries`
-A hash of config entries to set.
 
 ####`multi_instances`
 Wether or not use the multi-instance configuration (see [notes](#notes)).
@@ -54,17 +38,6 @@ Path of the params file.
 
 ####`start`
 Should the service be started by Puppet?
-
-###Resource: varnish::config_entry
-
-####`ensure`
-Should the config entry be `present` or `absent`?
-
-####`key`
-The key to change (defaults to `$name`).
-
-####`value`
-The value.
 
 Notes
 -----

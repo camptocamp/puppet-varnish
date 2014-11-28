@@ -6,7 +6,6 @@
 #
 class varnish(
   $enable          = true,
-  $config_entries  = {},
   $multi_instances = true,
   $params_file     = $::osfamily ? {
     'Debian' => '/etc/default/varnish',
