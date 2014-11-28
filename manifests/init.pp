@@ -8,7 +8,10 @@ class varnish(
   $enable          = true,
   $config_entries  = {},
   $multi_instances = true,
-  $params_file     = '/etc/varnish/varnish.params',
+  $params_file     = $::osfamily ? {
+    'Debian' => '/etc/default/varnish',
+    'RedHat' => '/etc/varnish/varnish.params',
+  },
   $start           = true,
 ) {
 
