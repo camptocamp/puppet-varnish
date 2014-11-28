@@ -1,6 +1,6 @@
 define varnish::config_entry(
   $value,
-  $ensure = 'presen',
+  $ensure = 'present',
   $key    = $name,
 ) {
   shellvar { "varnish_${name}":
