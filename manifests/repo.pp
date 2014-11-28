@@ -16,7 +16,7 @@ class varnish::repo(
         'varnish-cache': {
           include ::apt
           apt::source { 'varnish':
-            location   => "http://repo.varnish-cache.org/debian",
+            location   => 'http://repo.varnish-cache.org/debian',
             repos      => 'varnish-4.0',
             key        => 'C4DEFFEB',
             key_source => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
@@ -41,7 +41,7 @@ class varnish::repo(
         'varnish-cache': {
           yumrepo { 'varnish':
             descr    => 'varnish',
-            baseurl  => "http://repo.varnish-cache.org/redhat/varnish-4.0/el${operatingsystemmajrelease}/\$basearch",
+            baseurl  => "http://repo.varnish-cache.org/redhat/varnish-4.0/el${::operatingsystemmajrelease}/\$basearch",
             enabled  => '1',
             gpgcheck => '1',
             gpgkey   => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
