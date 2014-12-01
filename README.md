@@ -39,11 +39,35 @@ Path of the params file.
 ####`start`
 Should the service be started by Puppet?
 
-####`varnish_listen_address`
-Address to listen clients requests.
+####`admin_listen_address`
+Admin interface listen address.
 
-####`varnish_listen_port`
-Port to listen clients requests.
+####`admin_listen_port`
+Admin interface listen port.
+
+####`group`
+Group for the varnishd worker processes
+
+####`listen_address`
+Default address to bind to.
+
+####`listen_port`
+Default port to bind to.
+
+####`secret_file`
+Shared secret file for admin interface.
+
+####`storage`
+Backend storage specification.
+
+####`ttl`
+Default TTL used when the backend does not specify one.
+
+####`user`
+User for the varnishd worker processes.
+
+####`vcl_conf`
+Main configuration file.
 
 Notes
 -----

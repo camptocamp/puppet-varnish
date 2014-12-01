@@ -43,7 +43,7 @@ describe 'varnish' do
       describe port(6082) do
         it { is_expected.to be_listening }
         it do
-          pending 'serverspec documentation is abviously not up-to-date'
+          pending 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
       end
@@ -85,18 +85,23 @@ describe 'varnish' do
       describe port(6082) do
         it { is_expected.to be_listening }
         it do
-          pending 'serverspec documentation is abviously not up-to-date'
+          pending 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
       end
     end
 
-    context 'whith varnish_listen_port => 6080' do
+    context 'whith some params' do
       it 'should idempotently run' do
         pp = <<-EOS
         class { 'varnish':
-          multi_instances     => false,
-          varnish_listen_port => 6080,
+          multi_instances      => false,
+          admin_listen_address => '0.0.0.0',
+          admin_listen_port    => 6083,
+          listen_address       => 'localhost',
+          listen_port          => 6080,
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          ttl                  => 60,
         }
         EOS
 
@@ -108,12 +113,17 @@ describe 'varnish' do
         it { is_expected.to be_listening }
       end
 
-      describe port(6082) do
+      describe port(6083) do
         it { is_expected.to be_listening }
         it do
-          pending 'serverspec documentation is abviously not up-to-date'
+          pending 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
+      end
+
+      describe process('varnishd') do
+        its(:args) { should match /-s file,\/var\/lib\/varnish\/varnish_storage.bin,95%/ }
+        its(:args) { should match /-t 60/ }
       end
     end
   end

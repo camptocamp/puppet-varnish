@@ -13,8 +13,16 @@ class varnish(
   },
   $start           = true,
 
-  $varnish_listen_address = undef,
-  $varnish_listen_port    = undef,
+  $admin_listen_address = undef,
+  $admin_listen_port    = undef,
+  $group                = undef,
+  $listen_address       = undef,
+  $listen_port          = undef,
+  $secret_file          = undef,
+  $storage              = undef,
+  $ttl                  = undef,
+  $user                 = undef,
+  $vcl_conf             = undef,
 ) {
 
   validate_bool($multi_instances)
