@@ -11,6 +11,7 @@ group :development, :test do
   gem 'beaker',                  :require => false
   gem 'beaker-rspec',            :require => false
   gem 'pry',                     :require => false
+  gem 'ruby-augeas',             :require => false
 end
 
 if facterversion = ENV['FACTER_GEM_VERSION']
