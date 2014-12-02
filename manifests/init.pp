@@ -5,13 +5,11 @@
 # services, because they are handled separately by varnish::instance.
 #
 class varnish(
-  $enable          = true,
   $multi_instances = true,
   $params_file     = $::osfamily ? {
     'Debian' => '/etc/default/varnish',
     'RedHat' => '/etc/varnish/varnish.params',
   },
-  $start           = true,
 
   $admin_listen_address = undef,
   $admin_listen_port    = undef,
