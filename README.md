@@ -18,12 +18,24 @@ class { 'varnish':
 }
 ```
 
+To manage varnishlog:
+```puppet
+class { 'varnish::log': }
+```
+
+To manage varnishncsa:
+```puppet
+class { 'varnish::ncsa': }
+```
+
 Reference
 ---------
 
 Classes:
 
 * [varnish](#class-varnish)
+* [varnish::log](#class-varnishlog)
+* [varnish::ncsa](#class-varnishncsa)
 
 ###Class: varnish
 
@@ -68,6 +80,10 @@ User for the varnishd worker processes.
 
 ####`vcl_conf`
 Main configuration file.
+
+###Class: varnish::log
+
+###Class: varnish::ncsa
 
 Notes
 -----
