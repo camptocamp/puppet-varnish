@@ -36,22 +36,21 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
     end 
   end
 
+  FLAGS = {
+    'listen_address'       => '-a',
+    'listen_port'          => '-a',
+    'admin_listen_address' => '-T',
+    'admin_listen_port'    => '-T',
+    'user'                 => '-u',
+    'group'                => '-g',
+    'ttl'                  => '-t',
+    'secret_file'          => '-S',
+    'storage'              => '-s',
+  }
+
   def self.get_flag(resource)
-    case resource[:name]
-    when 'listen_address', 'listen_port'
-      '-a'
-    when 'admin_listen_address', 'admin_listen_port'
-      '-T'
-    when 'user'
-      '-u'
-    when 'group'
-      '-g'
-    when 'ttl'
-      '-t'
-    when 'secret_file'
-      '-S'
-    when 'storage'
-      '-s'
+    if FLAGS.has_key? resource[:name]
+      FLAGS[resource[:name]]
     else
       fail "Unknown varnish parameter '#{resource[:name]}'"
     end
