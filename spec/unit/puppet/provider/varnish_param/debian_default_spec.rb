@@ -46,12 +46,13 @@ describe provider_class do
         }
       }
 
-      inst.size.should == 5 
+      inst.size.should == 6
       inst[0].should == {:name=>"listen_port", :ensure=>:present, :value=>"6081"}
       inst[1].should == {:name=>"admin_listen_address", :ensure=>:present, :value=>"localhost"}
       inst[2].should == {:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"}
-      inst[3].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
-      inst[4].should == {:name=>"storage", :ensure=>:present, :value=>"malloc,256m"}
+      inst[3].should == {:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"}
+      inst[4].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
+      inst[5].should == {:name=>"storage", :ensure=>:present, :value=>"malloc,256m"}
     end
 
     it "should create a new entry" do

@@ -125,9 +125,9 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
               :target => target
             ) unless port.empty?
           else
-            variable = FLAGS.select { |f, v| v == cur_arg }.keys[0]
+            variable = FLAGS.select { |f, v| v == cur_arg }
             resources << new(
-              :name   => variable,
+              :name   => variable.keys[0],
               :ensure => :present,
               :value  => arg,
               :target => target
