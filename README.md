@@ -45,9 +45,6 @@ Should the service be enabled during boot time?
 ####`multi_instances`
 Wether or not use the multi-instance configuration (see [notes](#notes)).
 
-####`params_file`
-Path of the params file.
-
 ####`start`
 Should the service be started by Puppet?
 

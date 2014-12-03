@@ -29,8 +29,12 @@ class varnish::config {
       }
     }
     'RedHat': {
+      $params_file = $::operatingsystemmajrelease ? {
+        '6' => '/etc/sysconfig/varnish',
+        '7' => '/etc/varnish/varnish.params',
+      }
       Shellvar {
-        target   => $::varnish::params_file,
+        target   => $params_file,
       }
       if $::varnish::admin_listen_address != undef {
         shellvar { 'VARNISH_ADMIN_LISTEN_ADDRESS':

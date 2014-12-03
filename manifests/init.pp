@@ -6,10 +6,6 @@
 #
 class varnish(
   $multi_instances = true,
-  $params_file     = $::osfamily ? {
-    'Debian' => '/etc/default/varnish',
-    'RedHat' => '/etc/varnish/varnish.params',
-  },
 
   $admin_listen_address = undef,
   $admin_listen_port    = undef,
