@@ -2,6 +2,7 @@ Puppet::Type.type(:varnish_param).provide(:redhat_sysconfig, :parent => Puppet::
   desc "Manage varnish parameters on RedHat 6"
 
   confine :feature => :augeas
+  confine :osfamily => :redhat
   defaultfor :osfamily => :redhat, :operatingsystemmajrelease => '6'
 
   lens { 'Shellvars.lns' }

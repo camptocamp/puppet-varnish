@@ -2,6 +2,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
   desc "Manage varnish parameters on Debian 7"
 
   confine :feature => :augeas
+  confine :osfamily => :debian
   defaultfor :operatingsystem => :debian, :operatingsystemmajrelease => '7'
 
   lens { 'Shellvars_list.lns' }

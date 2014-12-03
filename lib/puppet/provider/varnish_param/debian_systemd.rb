@@ -2,6 +2,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => :debian_de
   desc "Manage varnish parameters on Debian 8"
 
   confine :feature => :augeas
+  confine :osfamily => :debian
   defaultfor :operatingsystem => :debian, :operatingsystemmajrelease => '8'
 
   lens { 'Systemd.lns' }
