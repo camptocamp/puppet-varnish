@@ -37,6 +37,10 @@ Classes:
 * [varnish::log](#class-varnishlog)
 * [varnish::ncsa](#class-varnishncsa)
 
+Resources:
+
+* [varnish_param](#resource-varnishparam)
+
 ###Class: varnish
 
 ####`enable`
@@ -81,6 +85,27 @@ Main configuration file.
 ###Class: varnish::log
 
 ###Class: varnish::ncsa
+
+###Resource: varnish_param
+
+This resource is a native type and a series of Augeas-based providers.
+
+It allows to modify varnish parameters where OSes put them by default:
+
+* in /etc/default/varnish for Debian wheezy (as a list of parameters)
+* in /etc/systemd/services/varnish.service for Debian jessie (as a list of parameters)
+* in /etc/sysconfig/varnish for RedHat 6 (as standalone variables)
+* in /etc/varnish/varnish.params for RedHat 7 (as standalone variables)
+
+Example:
+
+```puppet
+varnish_param { 'listen_address':
+  ensure => present,
+  value   => 'localhost',
+}
+```
+
 
 Notes
 -----
