@@ -6,6 +6,7 @@
 #
 class varnish(
   $multi_instances = true,
+  $vcl_content     = undef,
 
   $admin_listen_address = undef,
   $admin_listen_port    = undef,
@@ -16,7 +17,7 @@ class varnish(
   $storage              = undef,
   $ttl                  = undef,
   $user                 = undef,
-  $vcl_conf             = undef,
+  $vcl_conf             = '/etc/varnish/default.vcl',
 ) {
 
   validate_bool($multi_instances)
