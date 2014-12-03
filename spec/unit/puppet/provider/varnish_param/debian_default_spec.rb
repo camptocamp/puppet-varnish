@@ -36,6 +36,24 @@ describe provider_class do
     let(:tmptarget) { aug_fixture("full") }
     let(:target) { tmptarget.path }
 
+    it "should list instances" do
+      provider_class.stubs(:target).returns(target)
+      inst = provider_class.instances.map { |p|
+        {
+          :name => p.get(:name),
+          :ensure => p.get(:ensure),
+          :value => p.get(:value),
+        }
+      }
+
+      inst.size.should == 5 
+      inst[0].should == {:name=>"listen_port", :ensure=>:present, :value=>"6081"}
+      inst[1].should == {:name=>"admin_listen_address", :ensure=>:present, :value=>"localhost"}
+      inst[2].should == {:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"}
+      inst[3].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
+      inst[4].should == {:name=>"storage", :ensure=>:present, :value=>"malloc,256m"}
+    end
+
     it "should create a new entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "user",

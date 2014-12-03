@@ -85,6 +85,59 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
     "#{base_path}/value[preceding-sibling::value[1]='#{get_flag(resource)}']"
   end
 
+  def self.instances
+    resources = []
+    augopen do |aug, path|
+      cur_arg = nil
+      aug.match("#{base_path}/*[label()!='quote']").each do |spath|
+        arg = aug.get(spath)
+        if arg =~ /^-\w$/
+          cur_arg = arg
+          next
+        else
+          if cur_arg == '-a'
+            address, port = arg.split(':')
+            resources << new(
+              :name   => 'listen_address',
+              :ensure => :present,
+              :value  => address,
+              :target => target
+            ) unless address.empty?
+            resources << new(
+              :name   => 'listen_port',
+              :ensure => :present,
+              :value  => port,
+              :target => target
+            ) unless port.empty?
+          elsif cur_arg == '-T'
+            address, port = arg.split(':')
+            resources << new(
+              :name   => 'admin_listen_address',
+              :ensure => :present,
+              :value  => address,
+              :target => target
+            ) unless address.empty?
+            resources << new(
+              :name   => 'admin_listen_port',
+              :ensure => :present,
+              :value  => port,
+              :target => target
+            ) unless port.empty?
+          else
+            variable = FLAGS.select { |f, v| v == cur_arg }.keys[0]
+            resources << new(
+              :name   => variable,
+              :ensure => :present,
+              :value  => arg,
+              :target => target
+            ) if variable
+          end
+        end
+      end
+    end
+    resources
+  end
+
   def create
     augopen! do |aug|
       klass = self.class
@@ -110,7 +163,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
         aug.rm(klass.flag_path(klass.get_flag(resource)))
         # Remove entry if empty
         # keep generic so we can reuse it with systemd
-        aug.rm("#{klass.base_path}[count(*[.!='quote'])=0]")
+        aug.rm("#{klass.base_path}[count(*[label()!='quote'])=0]")
       end
     end
   end
