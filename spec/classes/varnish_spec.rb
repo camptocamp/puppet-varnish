@@ -6,6 +6,6 @@ describe 'varnish' do
       :osfamily        => 'Redhat',
     } }
 
-    it { should compile.with_all_deps }
+    it { is_expected.to compile.with_all_deps }
   end
 end
