@@ -33,6 +33,30 @@ describe provider_class do
     let(:tmptarget) { aug_fixture("full") }
     let(:target) { tmptarget.path }
 
+    it "should list instances" do
+      provider_class.stubs(:target).returns(target)
+      inst = provider_class.instances.map { |p|
+        {
+          :name => p.get(:name),
+          :ensure => p.get(:ensure),
+          :value => p.get(:value),
+        }
+      }
+
+      inst.size.should == 11
+      inst[0].should == {:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"}
+      inst[1].should == {:name=>"listen_port", :ensure=>:present, :value=>"6081"}
+      inst[2].should == {:name=>"admin_listen_address", :ensure=>:present, :value=>"127.0.0.1"}
+      inst[3].should == {:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"}
+      inst[4].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
+      inst[5].should == {:name=>"min_threads", :ensure=>:present, :value=>"50"}
+      inst[6].should == {:name=>"max_threads", :ensure=>:present, :value=>"1000"}
+      inst[7].should == {:name=>"thread_timeout", :ensure=>:present, :value=>"120"}
+      inst[8].should == {:name=>"storage_size", :ensure=>:present, :value=>"256M"}
+      inst[9].should == {:name=>"storage", :ensure=>:present, :value=>"\"malloc,${VARNISH_STORAGE_SIZE}\""}
+      inst[10].should == {:name=>"ttl", :ensure=>:present, :value=>"120"}
+    end
+
     it "should create a new entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "user",

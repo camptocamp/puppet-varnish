@@ -17,6 +17,22 @@ Puppet::Type.type(:varnish_param).provide(:redhat_sysconfig, :parent => Puppet::
     "$target/#{var_name(resource)}"
   end
 
+  def self.instances
+    resources = []
+    augopen do |aug, path|
+      aug.match('$target/*[label()=~glob("VARNISH_*")]').each do |spath|
+        variable = path_label(aug, spath).sub('VARNISH_', '').downcase
+        resources << new(
+          :name   => variable,
+          :ensure => :present,
+          :value  => aug.get(spath),
+          :target => target
+        )
+      end
+    end
+    resources
+  end
+
   def create
     augopen! do |aug|
       klass = self.class
