@@ -39,7 +39,7 @@ Classes:
 
 Resources:
 
-* [varnish_param](#resource-varnishparam)
+* [varnish_param](#resource-varnish_param)
 
 ###Class: varnish
 
