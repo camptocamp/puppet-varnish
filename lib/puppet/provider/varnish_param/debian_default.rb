@@ -42,9 +42,10 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => Puppet::Ty
     'listen_port'          => '-a',
     'admin_listen_address' => '-T',
     'admin_listen_port'    => '-T',
-    'user'                 => '-u',
+    'vcl_conf'             => '-f',
     'group'                => '-g',
     'ttl'                  => '-t',
+    'user'                 => '-u',
     'secret_file'          => '-S',
     'storage'              => '-s',
   }
