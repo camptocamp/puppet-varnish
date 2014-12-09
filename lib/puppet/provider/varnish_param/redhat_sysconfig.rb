@@ -37,7 +37,7 @@ Puppet::Type.type(:varnish_param).provide(:redhat_sysconfig, :parent => Puppet::
     augopen! do |aug|
       klass = self.class
       variable = klass.var_name(resource)
-      comment_path = "$target/#comment[.=~regexp('#{variable}')]"
+      comment_path = "$target/#comment[.=~regexp('#{variable}=.*')]"
       if aug.match(comment_path).empty?
         Puppet.debug("Inserting varnish_param #{variable} before DAEMON_OPTS")
         aug.insert('$target/DAEMON_OPTS', variable, true)

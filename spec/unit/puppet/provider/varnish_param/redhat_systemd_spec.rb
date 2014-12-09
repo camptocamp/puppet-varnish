@@ -35,14 +35,27 @@ describe provider_class do
 
     it "should create a new entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
-        :name     => "user",
-        :value    => "varnish",
+        :name     => "max_threads",
+        :value    => "100",
         :target   => target,
         :provider => provider
       ))
 
       aug_open(target, "Shellvars.lns") do |aug|
-        expect(aug.get('VARNISH_USER')).to eq('varnish')
+        expect(aug.get('VARNISH_MAX_THREADS')).to eq('100')
+      end
+    end
+
+    it "should create a new entry after an existing comment" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "listen_address",
+        :value    => "localhost",
+        :target   => target,
+        :provider => provider
+      ))
+
+      aug_open(target, "Shellvars.lns") do |aug|
+        expect(aug.get('VARNISH_LISTEN_ADDRESS[following-sibling::VARNISH_LISTEN_PORT][1]')).to eq('localhost')
       end
     end
 
