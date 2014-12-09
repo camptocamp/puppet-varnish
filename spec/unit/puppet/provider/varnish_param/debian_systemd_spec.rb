@@ -59,8 +59,8 @@ describe provider_class do
 
     it "should create a new entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
-        :name     => "max_threads",
-        :value    => "100",
+        :name     => "user",
+        :value    => "varnish",
         :target   => target,
         :provider => provider
       ))
