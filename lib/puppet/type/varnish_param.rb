@@ -1,7 +1,15 @@
 Puppet::Type.newtype(:varnish_param) do
   @doc = "Manages varnish parameters"
 
-  ensurable
+  ensurable do
+    defaultvalues
+
+    def insync?(is)
+      # Only manage value if it is given
+      return true if should == :present and @resource[:value].nil?
+      super
+    end
+  end
 
   newparam(:name, :namevar => true) do
     desc "The default namevar"
