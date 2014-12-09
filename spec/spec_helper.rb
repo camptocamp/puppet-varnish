@@ -4,13 +4,11 @@ include PuppetFacts
 
 ENV['UNIT_TEST_PLATFORMS'] = 'debian-7-x86_64'
 
-
 # Setup augeasproviders
 require 'pathname'
 dir = Pathname.new(__FILE__).parent
 $LOAD_PATH.unshift(dir, File.join(dir, 'fixtures/modules/augeasproviders_core/spec/lib'), File.join(dir, '..', 'lib'))
 require 'augeas_spec'
-
 
 RSpec.configure do |c|
   c.include PuppetlabsSpec::Files
