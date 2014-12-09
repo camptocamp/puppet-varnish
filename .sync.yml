@@ -15,4 +15,5 @@ Gemfile:
   - gem: beaker-rspec
   - gem: pry
   - gem: ruby-augeas
+spec/spec_helper.rb:
   augeasproviders: true
