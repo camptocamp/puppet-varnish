@@ -48,13 +48,13 @@ describe provider_class do
         }
       }
 
-      inst.size.should == 6 
-      inst[0].should == {:name=>"listen_port", :ensure=>:present, :value=>"6081"}
-      inst[1].should == {:name=>"admin_listen_address", :ensure=>:present, :value=>"localhost"}
-      inst[2].should == {:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"}
-      inst[3].should == {:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"}
-      inst[4].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
-      inst[5].should == {:name=>"storage", :ensure=>:present, :value=>"malloc,256m"}
+      expect(inst.size).to eq(6) 
+      expect(inst[0]).to eq({:name=>"listen_port", :ensure=>:present, :value=>"6081"})
+      expect(inst[1]).to eq({:name=>"admin_listen_address", :ensure=>:present, :value=>"localhost"})
+      expect(inst[2]).to eq({:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"})
+      expect(inst[3]).to eq({:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"})
+      expect(inst[4]).to eq({:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"})
+      expect(inst[5]).to eq({:name=>"storage", :ensure=>:present, :value=>"malloc,256m"})
     end
 
     it "should create a new entry" do
@@ -66,8 +66,8 @@ describe provider_class do
       ))
 
       aug_open(target, "Systemd.lns") do |aug|
-        aug.get('Service/ExecStart/arguments/11').should == '-u'
-        aug.get('Service/ExecStart/arguments/12').should == 'varnish'
+        expect(aug.get('Service/ExecStart/arguments/11')).to eq('-u')
+        expect(aug.get('Service/ExecStart/arguments/12')).to eq('varnish')
       end
     end
 
@@ -80,8 +80,8 @@ describe provider_class do
       ))
 
       aug_open(target, "Systemd.lns") do |aug|
-        aug.get('Service/ExecStart/arguments/1').should == '-a'
-        aug.get('Service/ExecStart/arguments/2').should == 'localhost:6081'
+        expect(aug.get('Service/ExecStart/arguments/1')).to eq('-a')
+        expect(aug.get('Service/ExecStart/arguments/2')).to eq('localhost:6081')
       end
     end
 
@@ -94,9 +94,9 @@ describe provider_class do
       ))
 
       aug_open(target, "Systemd.lns") do |aug|
-        aug.match('Service/ExecStart/arguments/*').size.should == 8
-        aug.get('Service/ExecStart/arguments/1').should == '-T'
-        aug.match('Service/ExecStart/arguments/*[.="-a"]').size.should == 0
+        expect(aug.match('Service/ExecStart/arguments/*').size).to eq(8)
+        expect(aug.get('Service/ExecStart/arguments/1')).to eq('-T')
+        expect(aug.match('Service/ExecStart/arguments/*[.="-a"]').size).to eq(0)
       end
     end
   end
@@ -113,9 +113,9 @@ describe provider_class do
         :provider => provider
       ))
 
-      txn.any_failed?.should_not == nil
-      @logs.first.level.should == :err
-      @logs.first.message.include?(target).should == true
+      expect(txn.any_failed?).not_to eq(nil)
+      expect(@logs.first.level).to eq(:err)
+      expect(@logs.first.message.include?(target)).to eq(true)
     end
   end
 end

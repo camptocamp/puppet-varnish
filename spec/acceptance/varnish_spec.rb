@@ -43,7 +43,7 @@ describe 'varnish' do
       describe port(6082) do
         it { is_expected.to be_listening }
         it do
-          pending 'requires serverspec >= 2.0.0'
+          skip 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
       end
@@ -85,7 +85,7 @@ describe 'varnish' do
       describe port(6082) do
         it { is_expected.to be_listening }
         it do
-          pending 'requires serverspec >= 2.0.0'
+          skip 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
       end
@@ -116,14 +116,21 @@ describe 'varnish' do
       describe port(6083) do
         it { is_expected.to be_listening }
         it do
-          pending 'requires serverspec >= 2.0.0'
+          skip 'requires serverspec >= 2.0.0'
           is_expected.to be_listening.on('127.0.0.1').with('tcp')
         end
       end
 
       describe process('varnishd') do
-        its(:args) { should match /-s file,\/var\/lib\/varnish\/varnish_storage.bin,95%/ }
-        its(:args) { should match /-t 60/ }
+        describe '#args' do
+          subject { super().args }
+          it { is_expected.to match /-s file,\/var\/lib\/varnish\/varnish_storage.bin,95%/ }
+        end
+
+        describe '#args' do
+          subject { super().args }
+          it { is_expected.to match /-t 60/ }
+        end
       end
     end
   end

@@ -42,7 +42,7 @@ describe provider_class do
       ))
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.get('VARNISH_USER').should == 'varnish'
+        expect(aug.get('VARNISH_USER')).to eq('varnish')
       end
     end
 
@@ -56,7 +56,7 @@ describe provider_class do
 
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.get('VARNISH_LISTEN_PORT').should == '16081'
+        expect(aug.get('VARNISH_LISTEN_PORT')).to eq('16081')
       end
     end
 
@@ -69,7 +69,7 @@ describe provider_class do
       ))
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.match('VARNISH_LISTEN_PORT').size.should == 0
+        expect(aug.match('VARNISH_LISTEN_PORT').size).to eq(0)
       end
     end
   end
@@ -86,9 +86,9 @@ describe provider_class do
         :provider => provider
       ))
 
-      txn.any_failed?.should_not == nil
-      @logs.first.level.should == :err
-      @logs.first.message.include?(target).should == true
+      expect(txn.any_failed?).not_to eq(nil)
+      expect(@logs.first.level).to eq(:err)
+      expect(@logs.first.message.include?(target)).to eq(true)
     end
   end
 end

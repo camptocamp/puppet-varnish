@@ -43,18 +43,18 @@ describe provider_class do
         }
       }
 
-      inst.size.should == 11
-      inst[0].should == {:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"}
-      inst[1].should == {:name=>"listen_port", :ensure=>:present, :value=>"6081"}
-      inst[2].should == {:name=>"admin_listen_address", :ensure=>:present, :value=>"127.0.0.1"}
-      inst[3].should == {:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"}
-      inst[4].should == {:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"}
-      inst[5].should == {:name=>"min_threads", :ensure=>:present, :value=>"50"}
-      inst[6].should == {:name=>"max_threads", :ensure=>:present, :value=>"1000"}
-      inst[7].should == {:name=>"thread_timeout", :ensure=>:present, :value=>"120"}
-      inst[8].should == {:name=>"storage_size", :ensure=>:present, :value=>"256M"}
-      inst[9].should == {:name=>"storage", :ensure=>:present, :value=>"\"malloc,${VARNISH_STORAGE_SIZE}\""}
-      inst[10].should == {:name=>"ttl", :ensure=>:present, :value=>"120"}
+      expect(inst.size).to eq(11)
+      expect(inst[0]).to eq({:name=>"vcl_conf", :ensure=>:present, :value=>"/etc/varnish/default.vcl"})
+      expect(inst[1]).to eq({:name=>"listen_port", :ensure=>:present, :value=>"6081"})
+      expect(inst[2]).to eq({:name=>"admin_listen_address", :ensure=>:present, :value=>"127.0.0.1"})
+      expect(inst[3]).to eq({:name=>"admin_listen_port", :ensure=>:present, :value=>"6082"})
+      expect(inst[4]).to eq({:name=>"secret_file", :ensure=>:present, :value=>"/etc/varnish/secret"})
+      expect(inst[5]).to eq({:name=>"min_threads", :ensure=>:present, :value=>"50"})
+      expect(inst[6]).to eq({:name=>"max_threads", :ensure=>:present, :value=>"1000"})
+      expect(inst[7]).to eq({:name=>"thread_timeout", :ensure=>:present, :value=>"120"})
+      expect(inst[8]).to eq({:name=>"storage_size", :ensure=>:present, :value=>"256M"})
+      expect(inst[9]).to eq({:name=>"storage", :ensure=>:present, :value=>"\"malloc,${VARNISH_STORAGE_SIZE}\""})
+      expect(inst[10]).to eq({:name=>"ttl", :ensure=>:present, :value=>"120"})
     end
 
     it "should create a new entry" do
@@ -66,7 +66,7 @@ describe provider_class do
       ))
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.get('VARNISH_USER').should == 'varnish'
+        expect(aug.get('VARNISH_USER')).to eq('varnish')
       end
     end
 
@@ -80,7 +80,7 @@ describe provider_class do
 
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.get('VARNISH_LISTEN_PORT').should == '16081'
+        expect(aug.get('VARNISH_LISTEN_PORT')).to eq('16081')
       end
     end
 
@@ -93,7 +93,7 @@ describe provider_class do
       ))
 
       aug_open(target, "Shellvars.lns") do |aug|
-        aug.match('VARNISH_LISTEN_PORT').size.should == 0
+        expect(aug.match('VARNISH_LISTEN_PORT').size).to eq(0)
       end
     end
   end
@@ -110,9 +110,9 @@ describe provider_class do
         :provider => provider
       ))
 
-      txn.any_failed?.should_not == nil
-      @logs.first.level.should == :err
-      @logs.first.message.include?(target).should == true
+      expect(txn.any_failed?).not_to eq(nil)
+      expect(@logs.first.level).to eq(:err)
+      expect(@logs.first.message.include?(target)).to eq(true)
     end
   end
 end
