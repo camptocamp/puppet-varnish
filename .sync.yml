@@ -10,10 +10,6 @@
   forge_password: "IT9zyEJdRra47vCzqpKmjbp9Y/mewvvMcE8+8LYm8VZXSAfgL0M1FLizyTstra30Bb7R6dnfIp0VIedo9h21YDXNtbT8dojh1pz9hXvK6Dh8oMqVdl2MkA/55GEty65n2e0OZVfr7Y7lesyAVc2aMUdc/GkJ6uhDvt5XGIHQRS8="
 Gemfile:
   optional:
-  - gem: serverspec
-  - gem: beaker
-  - gem: beaker-rspec
-  - gem: pry
   - gem: ruby-augeas
 spec/spec_helper.rb:
   augeasproviders: true
