@@ -133,6 +133,54 @@ describe 'varnish' do
         end
       end
     end
-  end
 
+    context 'with broken vcl file' do
+      it 'should idemptotently run' do
+        pp = <<-EOS
+        class { 'varnish':
+          multi_instances      => false,
+          admin_listen_address => '0.0.0.0',
+          admin_listen_port    => 6082,
+          listen_address       => 'localhost',
+          listen_port          => 6081,
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          ttl                  => 60,
+        }
+        EOS
+
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
+      end
+
+      it 'should fail to reload but should not restart' do
+        pp = <<-EOS
+        class { 'varnish':
+          multi_instances      => false,
+          admin_listen_address => '0.0.0.0',
+          admin_listen_port    => 6082,
+          listen_address       => 'localhost',
+          listen_port          => 6081,
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          ttl                  => 60,
+          vcl_content          => 'Broken VCL file {',
+        }
+        EOS
+
+        apply_manifest(pp, :expect_failures => true)
+        # TODO: catch error message
+      end
+
+      describe port(6081) do
+        it { is_expected.to be_listening }
+      end
+
+      describe port(6082) do
+        it { is_expected.to be_listening }
+        it do
+          skip 'requires serverspec >= 2.0.0'
+          is_expected.to be_listening.on('127.0.0.1').with('tcp')
+        end
+      end
+    end
+  end
 end
