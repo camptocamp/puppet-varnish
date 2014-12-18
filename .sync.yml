@@ -1,5 +1,6 @@
 ---
 .travis.yml:
+  use_containers: false
   install: 
     - "travis_retry ./.travis.sh"
   script:
