@@ -1,6 +1,6 @@
 ---
 language: ruby
-bundler_args: --without system_tests --path vendor/bundle
+bundler_args: --without system_tests
 install: ["travis_retry ./.travis.sh"]
 script: ["bundle exec rake validate", "bundle exec rake lint", "AUGEAS_LENS_LIB=lib/augeas/lenses bundle exec fakeroot rake spec SPEC_OPTS='--format documentation'", "bundle exec rake metadata"]
 matrix:
