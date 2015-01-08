@@ -25,6 +25,7 @@ class varnish::nagiosplugin (
 
   $baseurl = 'https://github.com/varnish/varnish-nagios'
 
+  # lint:ignore:empty_string_assignment
   case $::varnish_version {
     '2.1.1', '2.1.2': {
       # http://www.varnish-cache.org/trac/ticket/710
@@ -48,6 +49,7 @@ class varnish::nagiosplugin (
       $buildopt = ''
     }
   }
+  # lint:endignore
 
   $workdir = "/usr/src/check_varnish-${::varnish_version}-${revision}"
 
