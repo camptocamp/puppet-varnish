@@ -23,7 +23,7 @@ class varnish(
   validate_bool($multi_instances)
 
   if ($multi_instances) {
-    class { 'varnish::install': }
+    class { '::varnish::install': }
 
     service { 'varnish':
       ensure    => 'stopped',
@@ -73,10 +73,10 @@ class varnish(
     }
   } else {
     # New clean implementation
-    class { 'varnish::install': } ->
-    class { 'varnish::config_vcl': } ->
-    class { 'varnish::config': } ~>
-    class { 'varnish::service': } ->
+    class { '::varnish::install': } ->
+    class { '::varnish::config_vcl': } ->
+    class { '::varnish::config': } ~>
+    class { '::varnish::service': } ->
     Class['varnish']
   }
 }
