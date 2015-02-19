@@ -92,14 +92,14 @@ define varnish::instance(
   }
 
   file { "varnish-${instance} startup config":
-    ensure  => present,
+    ensure  => file,
     content => template('varnish/varnish.erb'),
     name    => $configfile_name,
   }
 
   if ($vcl_file != false) {
     file { "/etc/varnish/${instance}.vcl":
-      ensure  => present,
+      ensure  => file,
       source  => $vcl_file,
       notify  => Service["varnish-${instance}"],
       require => Package['varnish'],
@@ -108,7 +108,7 @@ define varnish::instance(
 
   if ($vcl_content != false) {
     file { "/etc/varnish/${instance}.vcl":
-      ensure  => present,
+      ensure  => file,
       content => $vcl_content,
       notify  => Service["varnish-${instance}"],
       require => Package['varnish'],
@@ -127,7 +127,7 @@ define varnish::instance(
   }
 
   file { "/etc/init.d/varnish-${instance}":
-    ensure  => present,
+    ensure  => file,
     mode    => '0755',
     owner   => 'root',
     group   => 'root',
@@ -140,7 +140,7 @@ define varnish::instance(
   }
 
   file { "/etc/init.d/varnishlog-${instance}":
-    ensure  => present,
+    ensure  => file,
     mode    => '0755',
     owner   => 'root',
     group   => 'root',

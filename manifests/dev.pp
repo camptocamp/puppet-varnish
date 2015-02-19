@@ -33,7 +33,7 @@ class varnish::dev {
     }
 
     file { '/usr/lib/pkgconfig/varnishapi.pc':
-      ensure => present,
+      ensure => file,
       source => 'puppet:///modules/varnish/usr/lib/pkgconfig/varnishapi.pc',
     }
 

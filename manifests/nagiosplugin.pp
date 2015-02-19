@@ -80,7 +80,7 @@ cd \$(dirname \$0) && ./autogen.sh && ./configure && make ${buildopt}
   }
 
   file { "${plugin_dir}/check_varnish":
-    ensure  => present,
+    ensure  => file,
     mode    => '0755',
     owner   => 'root',
     source  => "file://${workdir}/check_varnish",

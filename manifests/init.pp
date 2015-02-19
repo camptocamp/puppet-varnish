@@ -42,7 +42,7 @@ class varnish(
     }
 
     file { '/usr/local/sbin/vcl-reload.sh':
-      ensure => present,
+      ensure => file,
       owner  => 'root',
       group  => 'root',
       mode   => '0755',

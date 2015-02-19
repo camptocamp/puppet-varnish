@@ -20,7 +20,7 @@
 class varnish::dispatch_log {
 
   file {'/usr/local/bin/dispatch-log':
-    ensure => present,
+    ensure => file,
     mode   => '0755',
     group  => root,
     owner  => root,
@@ -28,7 +28,7 @@ class varnish::dispatch_log {
   }
 
   file {'/etc/init.d/dispatch-log':
-    ensure => present,
+    ensure => file,
     mode   => '0755',
     group  => root,
     owner  => root,
