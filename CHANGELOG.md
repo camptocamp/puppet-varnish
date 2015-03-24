@@ -1,3 +1,9 @@
+## 2015-03-24 - Release 1.99.5
+
+- Various rspec improvements
+- Add puppet-lint plugins
+- Lint/fix for Puppet 4
+
 ## 2015-01-07 - Release 1.99.4
 
 Fix unquoted strings in cases
