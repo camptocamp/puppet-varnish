@@ -1,8 +1,11 @@
 Varnish
 =======
 
-[![Puppet Forge](http://img.shields.io/puppetforge/v/camptocamp/varnish.svg)](https://forge.puppetlabs.com/camptocamp/varnish)
-[![Build Status](https://travis-ci.org/camptocamp/puppet-varnish.png?branch=master)](https://travis-ci.org/camptocamp/puppet-varnish)
+[![Puppet Forge Version](http://img.shields.io/puppetforge/v/camptocamp/varnish.svg)](https://forge.puppetlabs.com/camptocamp/varnish)
+[![Puppet Forge Downloads](http://img.shields.io/puppetforge/dt/camptocamp/varnish.svg)](https://forge.puppetlabs.com/camptocamp/varnish)
+[![Build Status](https://img.shields.io/travis/camptocamp/puppet-varnish/master.svg)](https://travis-ci.org/camptocamp/puppet-varnish)
+[![Gemnasium](https://img.shields.io/gemnasium/camptocamp/puppet-varnish.svg)](https://gemnasium.com/camptocamp/puppet-varnish)
+[![By Camptocamp](https://img.shields.io/badge/by-camptocamp-fb7047.svg)](http://www.camptocamp.com)
 
 Overview
 --------
