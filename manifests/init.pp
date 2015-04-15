@@ -41,12 +41,13 @@ class varnish(
       require   => Package['varnish'],
     }
 
+    $module_path = get_module_path($module_name)
     file { '/usr/local/sbin/vcl-reload.sh':
-      ensure => file,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
-      source => 'puppet:///modules/varnish/usr/local/sbin/vcl-reload.sh',
+      ensure  => file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0755',
+      content => file("${module_path}/files/usr/local/sbin/vcl-reload.sh"),
     }
 
     case $::operatingsystem {

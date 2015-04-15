@@ -32,9 +32,10 @@ class varnish::dev {
         target => '/usr/lib/libvarnishcompat.so.1.0.0';
     }
 
+    $module_path = get_module_path($module_name)
     file { '/usr/lib/pkgconfig/varnishapi.pc':
-      ensure => file,
-      source => 'puppet:///modules/varnish/usr/lib/pkgconfig/varnishapi.pc',
+      ensure  => file,
+      content => file("${module_path}/files/usr/lib/pkgconfig/varnishapi.pc"),
     }
 
     exec { 'refresh ldconfig':

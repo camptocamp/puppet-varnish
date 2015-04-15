@@ -19,20 +19,22 @@
 #
 class varnish::dispatch_log {
 
+  $module_path = get_module_path($module_name)
+
   file {'/usr/local/bin/dispatch-log':
-    ensure => file,
-    mode   => '0755',
-    group  => root,
-    owner  => root,
-    source => 'puppet:///modules/varnish/usr/local/bin/dispatch-log',
+    ensure  => file,
+    mode    => '0755',
+    group   => root,
+    owner   => root,
+    content => file("${module_path}/files/usr/local/bin/dispatch-log"),
   }
 
   file {'/etc/init.d/dispatch-log':
-    ensure => file,
-    mode   => '0755',
-    group  => root,
-    owner  => root,
-    source => 'puppet:///modules/varnish/etc/init.d/dispatch-log',
+    ensure  => file,
+    mode    => '0755',
+    group   => root,
+    owner   => root,
+    content => file("${module_path}/files/etc/init.d/dispatch-log"),
   }
 
   service { 'dispatch-log':
