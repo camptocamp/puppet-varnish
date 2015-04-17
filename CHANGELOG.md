@@ -1,3 +1,7 @@
+## 2015-04-17 - Release 1.99.8
+
+- Add beaker nodeset
+
 ## 2015-04-15 - Release 1.99.7
 
 - Use file() instead of fileserver (way faster)
