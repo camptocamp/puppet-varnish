@@ -83,6 +83,7 @@ cd \$(dirname \$0) && ./autogen.sh && ./configure && make ${buildopt}
     ensure  => file,
     mode    => '0755',
     owner   => 'root',
+    group   => 'root',
     source  => "file://${workdir}/check_varnish",
     require => Exec['build check_varnish'],
   }

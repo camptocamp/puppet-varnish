@@ -101,6 +101,9 @@ define varnish::instance(
     file { "/etc/varnish/${instance}.vcl":
       ensure  => file,
       source  => $vcl_file,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0644',
       notify  => Service["varnish-${instance}"],
       require => Package['varnish'],
     }
