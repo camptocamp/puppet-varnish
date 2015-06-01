@@ -20,7 +20,7 @@ class varnish::repo(
             ensure     => $ensure,
             location   => 'http://repo.varnish-cache.org/debian',
             repos      => 'varnish-4.0',
-            key        => 'C4DEFFEB',
+            key        => 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB',
             key_source => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
           }
         }
