@@ -1,3 +1,7 @@
+## 2015-06-24 - Release 1.99.17
+
+Replace apt-key with full length fingerprint
+
 ## 2015-05-28 - Release 1.99.16
 
 Add beaker_spec_helper to Gemfile
