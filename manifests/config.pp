@@ -19,8 +19,8 @@ class varnish::config {
         }
 
         varnish_param {
-          'listen_address': value => $::varnish::varnish_listen_address;
-          'listen_port':    value => $::varnish::varnish_listen_port;
+          'listen_address': value => $::varnish::listen_address;
+          'listen_port':    value => $::varnish::listen_port;
         }
       } else {
         fail "${::operatingsystem}${::operatingsystemmajrelease} not yet supported"
