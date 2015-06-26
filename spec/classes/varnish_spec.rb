@@ -25,7 +25,9 @@ describe 'varnish' do
           }
         end
 
-        it { is_expected.to compile.with_all_deps }
+        if facts[:osfamily] == 'RedHat' or facts[:operatingsystemmajrelease,].to_i >= 8
+          it { is_expected.to compile.with_all_deps }
+        end
       end
     end
   end
