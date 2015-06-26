@@ -21,7 +21,7 @@ describe 'varnish' do
       context "with mono instance" do
         let(:params) do
           {
-            :multi_instances => true,
+            :multi_instances => false,
           }
         end
 
