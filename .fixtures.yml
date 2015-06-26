@@ -1,7 +1,8 @@
 fixtures:
-  repositories:
-    augeasproviders_core: https://github.com/hercules-team/augeasproviders_core.git
-    augeasproviders_shellvar: https://github.com/hercules-team/augeasproviders_shellvar.git
-    stdlib: https://github.com/puppetlabs/puppetlabs-stdlib.git
+  forge_modules:
+    augeasproviders_core: 'herculesteam-augeasproviders_core'
+    augeasproviders_shellvar: 'herculesteam-augeasproviders_shellvar'
+    stdlib: 'puppetlabs-stdlib'
+    systemd: 'camptocamp-systemd'
   symlinks:
     varnish: "#{source_dir}"
