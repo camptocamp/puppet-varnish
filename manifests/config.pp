@@ -1,7 +1,7 @@
 class varnish::config {
   case $::osfamily {
     'Debian': {
-      if $::operatingsystemmajrelease =~ /sid/ or versioncmp($::operatingsystemmajrelease, '8') >= 0 {
+      if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
         include ::systemd
 
         file { '/etc/systemd/system/varnish.service':
