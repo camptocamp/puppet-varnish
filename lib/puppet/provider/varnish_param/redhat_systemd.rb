@@ -1,4 +1,4 @@
-Puppet::Type.type(:varnish_param).provide(:redhat_systemd, :parent => :redhat_sysconfig) do
+Puppet::Type.type(:varnish_param).provide(:redhat_systemd, :parent => :redhat_base) do
   desc "Manage varnish parameters on RedHat 7"
 
   confine :feature => :augeas
