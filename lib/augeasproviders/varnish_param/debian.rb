@@ -1,6 +1,6 @@
 module AugeasProviders
   module VarnishParam
-    class Debian
+    class Debian < Puppet::Type.type(:augeasprovider).provider(:default)
       def self.parse_value(resource, value)
         case resource[:name]
         when 'listen_address', 'admin_listen_address'
@@ -58,24 +58,6 @@ module AugeasProviders
 
       def self.create_flag(aug, flag)
         aug.set("#{base_path}/value[.='#{flag}']", flag)
-      end
-
-      def self.base_path
-        '$target/DAEMON_OPTS'
-      end
-
-      def self.set_base(aug, resource)
-        # Set quote first
-        aug.set("#{base_path}/quote", '"') unless aug.match('$target/DAEMON_OPTS/quote').any?
-      end
-
-      def self.create_resource(aug, resource)
-        aug.defnode('resource', resource_path(resource),
-                    format_value(aug, resource, resource[:value]))
-      end
-
-      resource_path do |resource|
-        "#{base_path}/value[preceding-sibling::value[1]='#{get_flag(resource)}']"
       end
 
       def self.instances
