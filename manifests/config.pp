@@ -4,7 +4,7 @@ class varnish::config {
       if versioncmp($::operatingsystemmajrelease, '8') >= 0 {
         include ::systemd
 
-        file { '/etc/systemd/services/varnish.service':
+        file { '/etc/systemd/system/varnish.service':
           ensure  => 'file',
           owner   => 'root',
           group   => 'root',
@@ -15,7 +15,7 @@ class varnish::config {
 
         Varnish_param {
           ensure  => present,
-          require => File['/etc/systemd/services/varnish.service'],
+          require => File['/etc/systemd/system/varnish.service'],
           notify  => Exec['systemctl-daemon-reload'],
         }
 

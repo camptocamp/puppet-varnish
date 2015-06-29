@@ -96,7 +96,7 @@ This resource is a native type and a series of Augeas-based providers.
 It allows to modify varnish parameters where OSes put them by default:
 
 * in /etc/default/varnish for Debian wheezy (as a list of parameters)
-* in /etc/systemd/services/varnish.service for Debian jessie (as a list of parameters)
+* in /etc/systemd/system/varnish.service for Debian jessie (as a list of parameters)
 * in /etc/sysconfig/varnish for RedHat 6 (as standalone variables)
 * in /etc/varnish/varnish.params for RedHat 7 (as standalone variables)
 
