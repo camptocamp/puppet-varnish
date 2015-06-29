@@ -1,3 +1,9 @@
+## 2015-06-29 - Release 1.99.20
+
+- Fix instances by splitting lib
+  into AugeasProviders::VarnishParam namespace
+- Support generic -p param=value parameters in varnish_param (Debian only)
+
 ## 2015-06-29 - Release 1.99.19
 
 - Fix multiple providers by adding base provider
