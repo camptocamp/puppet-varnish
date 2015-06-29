@@ -1,4 +1,6 @@
-Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => :debian_base) do
+require File.dirname(__FILE__) + '/../../../augeasproviders/varnish_param'
+
+Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProviders::VarnishParam::Debian) do
   desc "Manage varnish parameters on Debian 8"
 
   confine :feature => :augeas
