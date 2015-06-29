@@ -1,4 +1,6 @@
-Puppet::Type.type(:varnish_param).provide(:redhat_systemd, :parent => :redhat_base) do
+require File.dirname(__FILE__) + '/../../../augeasproviders/varnish_param/redhat'
+
+Puppet::Type.type(:varnish_param).provide(:redhat_systemd, :parent => AugeasProviders::VarnishParam::RedHat) do
   desc "Manage varnish parameters on RedHat 7"
 
   confine :feature => :augeas
