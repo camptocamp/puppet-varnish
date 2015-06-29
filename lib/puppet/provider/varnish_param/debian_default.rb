@@ -20,12 +20,21 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => AugeasProv
     aug.set("#{base_path}/quote", '"') unless aug.match('$target/DAEMON_OPTS/quote').any?
   end
 
+  def self.create_flag(aug, flag, resource)
+    aug.set("#{base_path}/value[last()+1]", flag)
+  end
+
   def self.create_resource(aug, resource)
     aug.defnode('resource', resource_path(resource),
                 format_value(aug, resource, resource[:value]))
   end
 
   resource_path do |resource|
-    "#{base_path}/value[preceding-sibling::value[1]='#{get_flag(resource)}']"
+    flag = get_flag(resource)
+    if flag == '-p'
+      "#{base_path}/value[preceding-sibling::value[1]='#{flag}' and .=~regexp('#{resource[:name]}=.*')]"
+    else
+      "#{base_path}/value[preceding-sibling::value[1]='#{flag}']"
+    end
   end
 end

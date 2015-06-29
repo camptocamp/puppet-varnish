@@ -2,30 +2,34 @@ module AugeasProviders
   module VarnishParam
     class Debian < Puppet::Type.type(:augeasprovider).provider(:default)
       def self.parse_value(resource, value)
-        case resource[:name]
-        when 'listen_address', 'admin_listen_address'
+        if ['listen_address', 'admin_listen_address'].include? resource[:name]
           value.split(':')[0]
-        when 'listen_port', 'admin_listen_port'
+        elsif ['listen_port', 'admin_listen_port'].include? resource[:name]
           value.split(':')[1]
-        else
+        elsif FLAGS.has_key? resource[:name]
           value
+        else
+          # Parse for -p
+          value.split('=')[1]
         end 
       end
 
       def self.format_value(aug, resource, value)
-        case resource[:name]
-        when 'listen_address', 'admin_listen_address'
+        if ['listen_address', 'admin_listen_address'].include? resource[:name]
           full_entry = aug.get('$resource')
           listen_port = full_entry.nil? ? '' : full_entry.split(':')[1]
           # Return nil if none of the values is set
           "#{value}:#{listen_port}" if value && listen_port
-        when 'listen_port', 'admin_listen_port'
+        elsif ['listen_port', 'admin_listen_port'].include? resource[:name]
           full_entry = aug.get('$resource')
           listen_address = full_entry.nil? ? '' : full_entry.split(':')[0]
           # Return nil if none of the values is set
           "#{listen_address}:#{value}" if listen_address && value
-        else
+        elsif FLAGS.has_key? resource[:name]
           value
+        else
+          # Pass to -p
+          "#{resource[:name]}=#{value}"
         end 
       end
 
@@ -46,18 +50,20 @@ module AugeasProviders
         if FLAGS.has_key? resource[:name]
           FLAGS[resource[:name]]
         else
-          fail "Unknown varnish parameter '#{resource[:name]}'"
+          # Default to -p
+          '-p'
         end
       end
 
-      def self.flag_path(flag)
+      def self.flag_path(resource)
         # Use * instead of value
         # so we can reuse it for the systemd provider
-        "#{base_path}/*[.='#{flag}']"
-      end
-
-      def self.create_flag(aug, flag)
-        aug.set("#{base_path}/value[.='#{flag}']", flag)
+        flag = get_flag(resource)
+        if flag == '-p'
+          "#{base_path}/*[.='#{flag}' and following-sibling::*[1]=~regexp('#{resource[:name]}=.*')]"
+        else
+          "#{base_path}/*[.='#{flag}']"
+        end
       end
 
       def self.instances
@@ -98,6 +104,14 @@ module AugeasProviders
                   :value  => port,
                   :target => target
                 ) unless port.empty?
+              elsif cur_arg == '-p'
+                name, val = arg.split('=')
+                resources << new(
+                  :name   => name,
+                  :ensure => :present,
+                  :value  => val,
+                  :target => target
+                )
               else
                 variable = FLAGS.select { |f, v| v == cur_arg }.flatten[0]
                 resources << new(
@@ -120,7 +134,7 @@ module AugeasProviders
           # Keep flag creation generic
           # so we can reuse it for the systemd provider
           flag = klass.get_flag(resource)
-          klass.create_flag(aug, flag) if aug.match(klass.flag_path(flag)).empty?
+          klass.create_flag(aug, flag, resource) if aug.match(klass.flag_path(resource)).empty?
           klass.create_resource(aug, resource)
         end
       end
@@ -129,13 +143,14 @@ module AugeasProviders
         augopen! do |aug|
           klass = self.class
           # Remove entry
-          if klass.format_value(aug, resource, nil)
+          if resource[:name] =~ /listen_/
             aug.set(klass.resource_path(resource),
                     klass.format_value(aug, resource, nil))
           else
+            aug.defvar('flag', klass.flag_path(resource))
             aug.rm(klass.resource_path(resource))
             # Remove flag
-            aug.rm(klass.flag_path(klass.get_flag(resource)))
+            aug.rm('$flag')
             # Remove entry if empty
             # keep generic so we can reuse it with systemd
             aug.rm("#{klass.base_path}[count(*[label()!='quote'])=0]")

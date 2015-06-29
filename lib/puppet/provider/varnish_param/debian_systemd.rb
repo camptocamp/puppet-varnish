@@ -24,7 +24,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProv
     "#{base_path}/#{num}"
   end
 
-  def self.create_flag(aug, flag)
+  def self.create_flag(aug, flag, resource)
     aug.set(next_arg(aug), flag)
   end
 
@@ -34,6 +34,11 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProv
   end
 
   resource_path do |resource|
-    "#{base_path}/*[preceding-sibling::*[1]='#{get_flag(resource)}']"
+    flag = get_flag(resource)
+    if flag == '-p'
+      "#{base_path}/*[preceding-sibling::*[1]='#{flag}' and .=~regexp('#{resource[:name]}=.*')]"
+    else
+      "#{base_path}/*[preceding-sibling::*[1]='#{flag}']"
+    end
   end
 end
