@@ -19,8 +19,16 @@ class varnish::config {
         }
 
         varnish_param {
-          'listen_address': value => $::varnish::listen_address;
-          'listen_port':    value => $::varnish::listen_port;
+          'listen_address':       value => $::varnish::listen_address;
+          'listen_port':          value => $::varnish::listen_port;
+          'admin_listen_address': value => $::varnish::admin_listen_address;
+          'admin_listen_port':    value => $::varnish::admin_listen_port;
+          'group':                value => $::varnish::group;
+          'user':                 value => $::varnish::user;
+          'secret_file':          value => $::varnish::secret_file;
+          'storage':              value => $::varnish::storage;
+          'ttl':                  value => $::varnish::ttl;
+          'vcl_conf':             value => $::varnish::vcl_conf;
         }
       } else {
         fail "${::operatingsystem}${::operatingsystemmajrelease} not yet supported"
