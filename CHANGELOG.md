@@ -1,3 +1,8 @@
+## 2015-06-29 - Release 1.99.19
+
+- Fix multiple providers by adding base provider
+- Fix service file location on Debian 8
+
 ## 2015-06-26 - Release 1.99.18
 
 Fix strict_variables activation with rspec-puppet 2.2
