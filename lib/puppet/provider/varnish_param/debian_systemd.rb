@@ -1,4 +1,4 @@
-Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => :debian_default) do
+Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => :debian_base) do
   desc "Manage varnish parameters on Debian 8"
 
   confine :feature => :augeas
