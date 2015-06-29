@@ -7,7 +7,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => :debian_ba
 
   lens { 'Systemd.lns' }
 
-  default_file { '/lib/systemd/system/varnish.service' }
+  default_file { '/etc/systemd/services/varnish.service' }
 
   def self.base_path
     "$target/Service/ExecStart/arguments"
