@@ -84,6 +84,31 @@ describe provider_class do
 
     it "should update existing entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "vcl_conf",
+        :value    => "/tmp/foo",
+        :target   => target,
+        :provider => provider
+      ))
+
+      augparse_filter(target, "Shellvars_list.lns", 'DAEMON_OPTS', '
+        { "DAEMON_OPTS"
+          { "quote" = "\"" }
+          { "value" = "-a" }
+          { "value" = ":6081" }
+          { "value" = "-T" }
+          { "value" = "localhost:6082" }
+          { "value" = "-f" }
+          { "value" = "/tmp/foo" }
+          { "value" = "-S" }
+          { "value" = "/etc/varnish/secret" }
+          { "value" = "-s" }
+          { "value" = "malloc,256m" }
+        }
+      ')
+    end
+
+    it "should update existing composite entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "listen_address",
         :value    => "localhost",
         :target   => target,
