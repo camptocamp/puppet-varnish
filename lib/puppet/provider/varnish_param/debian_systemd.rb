@@ -29,8 +29,13 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProv
   end
 
   def self.create_resource(aug, resource)
-    aug.set(next_arg(aug), format_value(aug, resource, resource[:value]))
-    aug.defvar('resource', resource_path(resource))
+    if aug.match('$resource').empty?
+      aug.set(next_arg(aug), format_value(aug, resource, resource[:value]))
+      aug.defvar('resource', resource_path(resource))
+    else
+      # Composite entry with existing value
+      aug.set('$resource', format_value(aug, resource, resource[:value]))
+    end
   end
 
   resource_path do |resource|

@@ -25,8 +25,9 @@ Puppet::Type.type(:varnish_param).provide(:debian_default, :parent => AugeasProv
   end
 
   def self.create_resource(aug, resource)
-    aug.defnode('resource', resource_path(resource),
-                format_value(aug, resource, resource[:value]))
+    # Don't use defnode because of composite values where node value might be there already
+    aug.set(resource_path(resource), format_value(aug, resource, resource[:value]))
+    aug.defvar('resource', resource_path(resource))
   end
 
   resource_path do |resource|

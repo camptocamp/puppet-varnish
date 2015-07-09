@@ -127,6 +127,12 @@ module AugeasProviders
         resources
       end
 
+      def exists?
+        # Override exists? for composite values
+        val = self.value
+        val && !val.empty?
+      end
+
       def create
         augopen! do |aug|
           klass = self.class
@@ -159,7 +165,8 @@ module AugeasProviders
       end
 
       define_aug_method(:value) do |aug, resource|
-        parse_value(resource, aug.get('$resource'))
+        val = aug.get('$resource')
+        parse_value(resource, val) if val
       end
 
       define_aug_method!(:value=) do |aug, resource, value|
