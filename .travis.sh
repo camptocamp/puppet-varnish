@@ -33,7 +33,7 @@ sudo apt-get install augeas-tools${PKG_VERSION} \
 
 # Install gems
 gem install bundler
-if [ -z $BEAKER_SET ]; then
+if [ -z $BEAKER_set ]; then
   bundle install --without system_tests
 else
   bundle install
