@@ -99,7 +99,7 @@ describe provider_class do
       end
     end
 
-    it "should remove existing entry" do
+    it "should remove existing entry entirely" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "listen_port",
         :ensure   => "absent",
@@ -111,6 +111,21 @@ describe provider_class do
         expect(aug.match('Service/ExecStart/arguments/*').size).to eq(8)
         expect(aug.get('Service/ExecStart/arguments/1')).to eq('-T')
         expect(aug.match('Service/ExecStart/arguments/*[.="-a"]').size).to eq(0)
+      end
+    end
+
+    it "should remove existing entry partially" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "admin_listen_port",
+        :ensure   => "absent",
+        :target   => target,
+        :provider => provider
+      ))
+
+      aug_open(target, "Systemd.lns") do |aug|
+        expect(aug.match('Service/ExecStart/arguments/*').size).to eq(10)
+        expect(aug.get('Service/ExecStart/arguments/3')).to eq('-T')
+        expect(aug.get('Service/ExecStart/arguments/4')).to eq('localhost:')
       end
     end
   end
