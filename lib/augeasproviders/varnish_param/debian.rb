@@ -19,12 +19,12 @@ module AugeasProviders
           full_entry = aug.get('$resource')
           listen_port = full_entry.nil? ? '' : full_entry.split(':')[1]
           # Return nil if none of the values is set
-          "#{value}:#{listen_port}" if value && listen_port
+          "#{value}:#{listen_port}" unless value.nil? && listen_port.empty?
         elsif ['listen_port', 'admin_listen_port'].include? resource[:name]
           full_entry = aug.get('$resource')
           listen_address = full_entry.nil? ? '' : full_entry.split(':')[0]
           # Return nil if none of the values is set
-          "#{listen_address}:#{value}" if listen_address && value
+          "#{listen_address}:#{value}" unless listen_address.empty? && value.nil?
         elsif FLAGS.has_key? resource[:name]
           value
         else
@@ -145,7 +145,7 @@ module AugeasProviders
           formatted = klass.format_value(aug, resource, nil)
           # Remove entry
           if resource[:name] =~ /listen_/ && formatted
-            aug.set(klass.resource_path(resource), formatted)
+            aug.set('$resource', formatted)
           else
             aug.defvar('flag', klass.flag_path(resource))
             aug.rm(klass.resource_path(resource))

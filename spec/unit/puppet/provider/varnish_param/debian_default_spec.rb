@@ -107,7 +107,7 @@ describe provider_class do
       ')
     end
 
-    it "should remove existing entry" do
+    it "should remove existing entry entirely" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "listen_port",
         :ensure   => "absent",
@@ -120,6 +120,31 @@ describe provider_class do
           { "quote" = "\"" }
           { "value" = "-T" }
           { "value" = "localhost:6082" }
+          { "value" = "-f" }
+          { "value" = "/etc/varnish/default.vcl" }
+          { "value" = "-S" }
+          { "value" = "/etc/varnish/secret" }
+          { "value" = "-s" }
+          { "value" = "malloc,256m" }
+        }
+      ')
+    end
+
+    it "should remove existing entry partially" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "admin_listen_port",
+        :ensure   => "absent",
+        :target   => target,
+        :provider => provider
+      ))
+
+      augparse_filter(target, "Shellvars_list.lns", 'DAEMON_OPTS', '
+        { "DAEMON_OPTS"
+          { "quote" = "\"" }
+          { "value" = "-a" }
+          { "value" = ":6081" }
+          { "value" = "-T" }
+          { "value" = "localhost:" }
           { "value" = "-f" }
           { "value" = "/etc/varnish/default.vcl" }
           { "value" = "-S" }
