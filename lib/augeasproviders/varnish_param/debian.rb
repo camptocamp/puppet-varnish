@@ -142,10 +142,10 @@ module AugeasProviders
       def destroy
         augopen! do |aug|
           klass = self.class
+          formatted = klass.format_value(aug, resource, nil)
           # Remove entry
-          if resource[:name] =~ /listen_/
-            aug.set(klass.resource_path(resource),
-                    klass.format_value(aug, resource, nil))
+          if resource[:name] =~ /listen_/ && formatted
+            aug.set(klass.resource_path(resource), formatted)
           else
             aug.defvar('flag', klass.flag_path(resource))
             aug.rm(klass.resource_path(resource))
