@@ -73,6 +73,20 @@ describe provider_class do
 
     it "should update existing entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "vcl_conf",
+        :value    => "/tmp/foo",
+        :target   => target,
+        :provider => provider
+      ))
+
+      aug_open(target, "Systemd.lns") do |aug|
+        expect(aug.get('Service/ExecStart/arguments/5')).to eq('-f')
+        expect(aug.get('Service/ExecStart/arguments/6')).to eq('/tmp/foo')
+      end
+    end
+
+    it "should update existing composite entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "listen_address",
         :value    => "localhost",
         :target   => target,
