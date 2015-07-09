@@ -30,6 +30,22 @@ describe provider_class do
           { "value" = "localhost:" } }
       ')
     end
+
+    it "should create generic new entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "foo",
+        :value    => "bar",
+        :target   => target,
+        :provider => provider
+      ))
+
+      augparse(target, "Shellvars_list.lns", '
+        { "DAEMON_OPTS"
+          { "quote" = "\"" }
+          { "value" = "-p" }
+          { "value" = "foo=bar" } }
+      ')
+    end
   end
 
   context "with full file" do

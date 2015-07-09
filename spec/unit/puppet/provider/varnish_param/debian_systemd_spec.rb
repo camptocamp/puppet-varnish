@@ -32,6 +32,24 @@ describe provider_class do
               { "2" = "localhost:" } } } }
       ')
     end
+
+    it "should create generic new entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "foo",
+        :value    => "bar",
+        :target   => target,
+        :provider => provider
+      ))
+
+      augparse(target, "Systemd.lns", '
+        { "Service"
+          { "ExecStart"
+            { "command" = "/usr/sbin/varnishd" }
+            { "arguments"
+              { "1" = "-p" }
+              { "2" = "foo=bar" } } } }
+      ')
+    end
   end
 
   context "with full file" do
