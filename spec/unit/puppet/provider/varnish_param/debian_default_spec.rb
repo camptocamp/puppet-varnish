@@ -98,6 +98,33 @@ describe provider_class do
       ')
     end
 
+    it "should create generic new entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "foo",
+        :value    => "bar",
+        :target   => target,
+        :provider => provider
+      ))
+
+      augparse_filter(target, "Shellvars_list.lns", 'DAEMON_OPTS', '
+        { "DAEMON_OPTS"
+          { "quote" = "\"" }
+          { "value" = "-a" }
+          { "value" = ":6081" }
+          { "value" = "-T" }
+          { "value" = "localhost:6082" }
+          { "value" = "-f" }
+          { "value" = "/etc/varnish/default.vcl" }
+          { "value" = "-S" }
+          { "value" = "/etc/varnish/secret" }
+          { "value" = "-s" }
+          { "value" = "malloc,256m" }
+          { "value" = "-p" }
+          { "value" = "foo=bar" }
+        }
+      ')
+    end
+
     it "should update existing entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "vcl_conf",

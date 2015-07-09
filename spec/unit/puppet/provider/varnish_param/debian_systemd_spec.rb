@@ -89,6 +89,21 @@ describe provider_class do
       end
     end
 
+    it "should create generic new entry" do
+      apply!(Puppet::Type.type(:varnish_param).new(
+        :name     => "foo",
+        :value    => "bar",
+        :target   => target,
+        :provider => provider
+      ))
+
+
+      aug_open(target, "Systemd.lns") do |aug|
+        expect(aug.get('Service/ExecStart/arguments/11')).to eq('-p')
+        expect(aug.get('Service/ExecStart/arguments/12')).to eq('foo=bar')
+      end
+    end
+
     it "should update existing entry" do
       apply!(Puppet::Type.type(:varnish_param).new(
         :name     => "vcl_conf",
