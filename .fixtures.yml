@@ -1,5 +1,6 @@
 fixtures:
   forge_modules:
+    augeas_file: 'camptocamp-augeas_file'
     augeasproviders_core: 'herculesteam-augeasproviders_core'
     augeasproviders_shellvar: 'herculesteam-augeasproviders_shellvar'
     stdlib: 'puppetlabs-stdlib'
