@@ -4,26 +4,6 @@ describe 'varnish' do
 
   context 'with distro package (EPEL for RedHat)' do
 
-    before :all do
-      pp = <<-EOS
-        $source = $::osfamily ? {
-          'Debian' => 'distro',
-          'RedHat' => 'epel',
-        }
-        class { 'varnish::repo':
-          source => $source,
-        }
-        package { 'varnish':
-          ensure => 'absent',
-        } ->
-        package { 'varnish-libs':
-          ensure => 'absent',
-        }
-      EOS
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
-
     context 'with defaults' do
       it 'should idempotently run' do
         pp = <<-EOS
@@ -42,52 +22,35 @@ describe 'varnish' do
 
       describe port(6082) do
         it { is_expected.to be_listening }
-        it do
-          skip 'requires serverspec >= 2.0.0'
-          is_expected.to be_listening.on('127.0.0.1').with('tcp')
-        end
+        it { is_expected.to be_listening.on('127.0.0.1').with('tcp') }
       end
     end
-  end
 
-  context 'with upstream package' do
-
-    before :all do
-      pp = <<-EOS
-        class { 'varnish::repo': }
-        package { 'varnish':
-          ensure => 'absent',
-        } ->
-        package { 'varnish-libs':
-          ensure => 'absent',
-        }
-      EOS
-      apply_manifest(pp, :catch_failures => true)
-      apply_manifest(pp, :catch_changes => true)
-    end
-
-    context 'with defaults' do
+    context 'with varnishlog' do
       it 'should idempotently run' do
         pp = <<-EOS
         class { 'varnish':
           multi_instances => false,
         }
+        class { 'varnish::log': }
         EOS
 
         apply_manifest(pp, :catch_failures => true)
         apply_manifest(pp, :catch_changes => true)
       end
+    end
 
-      describe port(6081) do
-        it { is_expected.to be_listening }
-      end
+    context 'with varnishnsca' do
+      it 'should idempotently run' do
+        pp = <<-EOS
+        class { 'varnish':
+          multi_instances => false,
+        }
+        class { 'varnish::ncsa': }
+        EOS
 
-      describe port(6082) do
-        it { is_expected.to be_listening }
-        it do
-          skip 'requires serverspec >= 2.0.0'
-          is_expected.to be_listening.on('127.0.0.1').with('tcp')
-        end
+        apply_manifest(pp, :catch_failures => true)
+        apply_manifest(pp, :catch_changes => true)
       end
     end
 
@@ -100,7 +63,7 @@ describe 'varnish' do
           admin_listen_port    => 6083,
           listen_address       => 'localhost',
           listen_port          => 6080,
-          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,100M',
           ttl                  => 60,
         }
         EOS
@@ -115,21 +78,18 @@ describe 'varnish' do
 
       describe port(6083) do
         it { is_expected.to be_listening }
-        it do
-          skip 'requires serverspec >= 2.0.0'
-          is_expected.to be_listening.on('127.0.0.1').with('tcp')
-        end
+        it { is_expected.to be_listening.on('127.0.0.1').with('tcp') }
       end
 
       describe process('varnishd') do
         describe '#args' do
           subject { super().args }
-          it { is_expected.to match /-s file,\/var\/lib\/varnish\/varnish_storage.bin,95%/ }
+          it { is_expected.to match(/-s file,\/var\/lib\/varnish\/varnish_storage.bin,100M/) }
         end
 
         describe '#args' do
           subject { super().args }
-          it { is_expected.to match /-t 60/ }
+          it { is_expected.to match(/-t 60/) }
         end
       end
     end
@@ -143,7 +103,7 @@ describe 'varnish' do
           admin_listen_port    => 6082,
           listen_address       => 'localhost',
           listen_port          => 6081,
-          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,100M',
           ttl                  => 60,
         }
         EOS
@@ -160,7 +120,7 @@ describe 'varnish' do
           admin_listen_port    => 6082,
           listen_address       => 'localhost',
           listen_port          => 6081,
-          storage              => 'file,/var/lib/varnish/varnish_storage.bin,95%',
+          storage              => 'file,/var/lib/varnish/varnish_storage.bin,100M',
           ttl                  => 60,
           vcl_content          => 'Broken VCL file {',
         }
@@ -176,10 +136,7 @@ describe 'varnish' do
 
       describe port(6082) do
         it { is_expected.to be_listening }
-        it do
-          skip 'requires serverspec >= 2.0.0'
-          is_expected.to be_listening.on('127.0.0.1').with('tcp')
-        end
+        it { is_expected.to be_listening.on('127.0.0.1').with('tcp') }
       end
     end
   end
