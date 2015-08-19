@@ -1,3 +1,7 @@
+## 2015-08-19 - Release 1.99.21
+
+- Fix providers
+
 ## 2015-06-29 - Release 1.99.20
 
 - Fix instances by splitting lib
