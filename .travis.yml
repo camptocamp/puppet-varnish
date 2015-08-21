@@ -19,31 +19,7 @@ matrix:
   - rvm: default
     sudo: required
     services: docker
-    env: BEAKER_set="debian-6-x86_64-docker"
-    bundler_args:
-    script: bundle exec rspec spec/acceptance/*_spec.rb
-  - rvm: default
-    sudo: required
-    services: docker
-    env: BEAKER_set="debian-7-x86_64-docker"
-    bundler_args:
-    script: bundle exec rspec spec/acceptance/*_spec.rb
-  - rvm: default
-    sudo: required
-    services: docker
     env: BEAKER_set="debian-8-x86_64-docker"
-    bundler_args:
-    script: bundle exec rspec spec/acceptance/*_spec.rb
-  - rvm: default
-    sudo: required
-    services: docker
-    env: BEAKER_set="ubuntu-12.04-x86_64-docker"
-    bundler_args:
-    script: bundle exec rspec spec/acceptance/*_spec.rb
-  - rvm: default
-    sudo: required
-    services: docker
-    env: BEAKER_set="ubuntu-14.04-x86_64-docker"
     bundler_args:
     script: bundle exec rspec spec/acceptance/*_spec.rb
   - rvm: default
