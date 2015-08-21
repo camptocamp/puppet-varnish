@@ -1,3 +1,7 @@
+## 2015-08-21 - Release 1.99.22
+
+Use docker for acceptance tests
+
 ## 2015-08-19 - Release 1.99.21
 
 - Fix providers
