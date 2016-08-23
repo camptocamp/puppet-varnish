@@ -10,7 +10,6 @@ group :development, :unit_tests do
   gem 'puppet-lint-unquoted_string-check',                 :require => false
   gem 'puppet-lint-empty_string-check',                    :require => false
   gem 'puppet-lint-spaceship_operator_without_tag-check',  :require => false
-  gem 'puppet-lint-variable_contains_upcase',              :require => false
   gem 'puppet-lint-absolute_classname-check',              :require => false
   gem 'puppet-lint-undef_in_function-check',               :require => false
   gem 'puppet-lint-leading_zero-check',                    :require => false
@@ -22,6 +21,7 @@ group :development, :unit_tests do
   gem 'rspec-puppet-facts',                                :require => false
   gem 'ruby-augeas',                                       :require => false
   gem 'puppet-blacksmith',                                 :require => false if RUBY_VERSION !~ /^1\./
+  gem 'json_pure', '< 2.0.2',                              :require => false
   gem 'ruby-augeas',                                       :require => false
 end
 
