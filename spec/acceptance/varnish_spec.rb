@@ -30,6 +30,7 @@ describe 'varnish' do
     context 'with varnishlog' do
       it 'should idempotently run' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances => false,
         }
@@ -44,6 +45,7 @@ describe 'varnish' do
     context 'with varnishnsca' do
       it 'should idempotently run' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances => false,
         }
@@ -58,6 +60,7 @@ describe 'varnish' do
     context 'whith some params' do
       it 'should idempotently run' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances      => false,
           admin_listen_address => '0.0.0.0',
@@ -98,6 +101,7 @@ describe 'varnish' do
     context 'with broken vcl file' do
       it 'should idemptotently run' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances      => false,
           admin_listen_address => '0.0.0.0',
@@ -115,6 +119,7 @@ describe 'varnish' do
 
       it 'should fail to reload but should not restart' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances      => false,
           admin_listen_address => '0.0.0.0',
