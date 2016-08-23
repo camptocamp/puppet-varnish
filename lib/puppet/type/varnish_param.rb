@@ -16,6 +16,9 @@ Puppet::Type.newtype(:varnish_param) do
   end
 
   newproperty(:value) do
+    munge do |val|
+      val.to_s
+    end
   end
 
   newparam(:varnish_binary) do
