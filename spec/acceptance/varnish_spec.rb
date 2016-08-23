@@ -7,6 +7,7 @@ describe 'varnish' do
     context 'with defaults' do
       it 'should idempotently run' do
         pp = <<-EOS
+        include varnish::repo
         class { 'varnish':
           multi_instances => false,
         }
