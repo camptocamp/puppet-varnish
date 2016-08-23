@@ -78,7 +78,7 @@ describe 'varnish' do
 
       describe port(6083) do
         it { is_expected.to be_listening }
-        it { is_expected.to be_listening.on('127.0.0.1').with('tcp') }
+        it { is_expected.to be_listening.on('0.0.0.0').with('tcp') }
       end
 
       describe process('varnishd') do
@@ -136,7 +136,7 @@ describe 'varnish' do
 
       describe port(6082) do
         it { is_expected.to be_listening }
-        it { is_expected.to be_listening.on('127.0.0.1').with('tcp') }
+        it { is_expected.to be_listening.on('0.0.0.0').with('tcp') }
       end
     end
   end
