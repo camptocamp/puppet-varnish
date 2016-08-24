@@ -7,6 +7,7 @@ provider_class = Puppet::Type.type(:varnish_param).provider(provider)
 
 describe provider_class do
   before :each do
+    Facter.fact(:osfamily).stubs(:value).returns 'Debian'
     Facter.fact(:operatingsystem).stubs(:value).returns 'Debian'
     Facter.fact(:operatingsystemmajrelease).stubs(:value).returns '7'
   end
