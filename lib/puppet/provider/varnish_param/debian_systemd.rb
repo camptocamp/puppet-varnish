@@ -6,6 +6,7 @@ Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProv
   confine :feature => :augeas
   confine :osfamily => :debian
   defaultfor :operatingsystem => :debian, :operatingsystemmajrelease => '8'
+  defaultfor :operatingsystem => :ubuntu, :operatingsystemmajrelease => '16.04'
 
   lens { 'Systemd.lns' }
 
