@@ -74,10 +74,10 @@ class varnish(
     }
   } else {
     # New clean implementation
-    class { '::varnish::install': } ->
-    class { '::varnish::config_vcl': } ->
-    class { '::varnish::config': } ~>
-    class { '::varnish::service': } ->
-    Class['varnish']
+    class { '::varnish::install': }
+    -> class { '::varnish::config_vcl': }
+    -> class { '::varnish::config': }
+    ~> class { '::varnish::service': }
+    -> Class['varnish']
   }
 }
