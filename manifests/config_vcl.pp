@@ -6,7 +6,7 @@ class varnish::config_vcl {
     mode    => '0644',
     content => $::varnish::vcl_content,
   }
-  
+
   ~> exec { 'varnish_reload_vcl':
     command     => 'service varnish reload',
     path        => $::path,
