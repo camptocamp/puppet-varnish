@@ -18,10 +18,10 @@ class varnish::repo(
           include ::apt
           apt::source { 'varnish':
             ensure     => $ensure,
-            location   => 'http://repo.varnish-cache.org/debian',
-            repos      => 'varnish-4.0',
-            key        => 'E98C6BBBA1CBC5C3EB2DF21C60E7C096C4DEFFEB',
-            key_source => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
+            location   => "https://packagecloud.io/varnishcache/varnish41/${::operatingsystem}/",
+            repos      => $::lsbdistcodename,
+            key        => '9C96F9CA0DC3F4EA78FF332834BF6E8ECBF5C49E',
+            key_source => 'https://packagecloud.io/varnishcache/varnish41/gpgkey',
           }
         }
         default: {
@@ -44,10 +44,10 @@ class varnish::repo(
           yumrepo { 'varnish':
             ensure   => $ensure,
             descr    => 'varnish',
-            baseurl  => "http://repo.varnish-cache.org/redhat/varnish-4.0/el${::operatingsystemmajrelease}/\$basearch",
+            baseurl  => "https://packagecloud.io/varnishcache/varnish41/el/${::operatingsystemmajrelease}/\$basearch",
             enabled  => '1',
             gpgcheck => '1',
-            gpgkey   => 'http://repo.varnish-cache.org/debian/GPG-key.txt',
+            gpgkey   => 'https://packagecloud.io/varnishcache/varnish41/gpgkey',
           }
         }
         default: {
