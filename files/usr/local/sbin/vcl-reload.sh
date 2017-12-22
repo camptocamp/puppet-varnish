@@ -18,7 +18,7 @@ fi
 # Hostname and management port
 # (defined in /etc/default/varnish or on startup)
 HOSTPORT="localhost:6082"
-NOW=`date +%F_%T`
+NOW=`date +%F_%H%M%S`
 TMPDIR=`mktemp -d`
 
 error()
