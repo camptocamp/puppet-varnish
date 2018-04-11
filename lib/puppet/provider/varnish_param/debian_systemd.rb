@@ -1,11 +1,12 @@
 require File.dirname(__FILE__) + '/../../../augeasproviders/varnish_param/debian'
 
 Puppet::Type.type(:varnish_param).provide(:debian_systemd, :parent => AugeasProviders::VarnishParam::Debian) do
-  desc "Manage varnish parameters on Debian 8"
+  desc "Manage varnish parameters on Debian 8 and 9"
 
   confine :feature => :augeas
   confine :osfamily => :debian
   defaultfor :operatingsystem => :debian, :operatingsystemmajrelease => '8'
+  defaultfor :operatingsystem => :debian, :operatingsystemmajrelease => '9'
 
   lens { 'Systemd.lns' }
 
