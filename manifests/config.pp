@@ -36,6 +36,13 @@ class varnish::config {
       }
     }
     'RedHat': {
+      if $::service_provider == 'systemd' {
+        file { '/usr/lib/systemd/system/varnish.service':
+          ensure  => present,
+          content => file('varnish/usr/lib/systemd/system/varnish.service'),
+        }
+      }
+
       Varnish_param {
         ensure  => present,
       }
