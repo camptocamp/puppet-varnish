@@ -1,0 +1,8 @@
+---
+varnish::admin_listen_address: '127.0.0.1'
+varnish::admin_listen_port: '6082'
+varnish::listen_port: '6081'
+varnish::secret_file: '/etc/varnish/secret'
+varnish::storage: 'malloc,256m'
+varnish::vcl_conf: '/etc/varnish/default.vcl'
+...

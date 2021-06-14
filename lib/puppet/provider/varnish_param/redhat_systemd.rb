@@ -6,6 +6,7 @@ Puppet::Type.type(:varnish_param).provide(:redhat_systemd, :parent => AugeasProv
   confine :feature => :augeas
   confine :osfamily => :redhat
   defaultfor :osfamily => :redhat, :operatingsystemmajrelease => '7'
+  defaultfor :osfamily => :redhat, :operatingsystemmajrelease => '8'
 
   lens { 'Shellvars.lns' }
 
