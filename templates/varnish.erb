@@ -19,6 +19,12 @@ ulimit -n $NFILES
 MEMLOCK="<%= @memlock %>"
 ulimit -l $MEMLOCK
 
+# Inform jemalloc to never use Transparent Huge Pages this reduces varnish memory
+# usage by orders of magnitude on kernels that enable THP by default
+# has no effect on kernels that do not enable THP by default thus safe
+# to set unconditionnally
+MALLOC_CONF=thp:never
+
 # Default varnish instance name is the local nodename.  Can be overridden with
 # the -n switch, to have more instances on a single server.
 INSTANCE="<%= @name %>"
@@ -27,7 +33,6 @@ INSTANCE="<%= @name %>"
 # DAEMON_COREFILE_LIMIT="unlimited"
 DAEMON_COREFILE_LIMIT="<%= @corelimit %>"
 ulimit -S -c $DAEMON_COREFILE_LIMIT
-
 
 ## Alternative 4, Do It Yourself
 #
