@@ -23,7 +23,9 @@ LimitMEMLOCK=82000
 # Maximum size of the corefile.
 LimitCORE=infinity
 
+Environment="MALLOC_CONF=thp:never"
 EnvironmentFile=/etc/varnish/varnish.params
+PassEnvironment=MALLOC_CONF
 
 Type=forking
 PIDFile=/var/run/varnish.pid
