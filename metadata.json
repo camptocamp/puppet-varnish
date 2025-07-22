@@ -1,6 +1,6 @@
 {
   "name": "camptocamp-varnish",
-  "version": "1.99.22",
+  "version": "2.00.00",
   "author": "Camptocamp",
   "summary": "Puppet Varnish module",
   "license": "Apache-2.0",
@@ -10,32 +10,35 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">=3.2.0 <5.0.0"
+      "version_requirement": ">= 9.7.0"
     },
     {
-      "name": "herculesteam/augeasproviders_core",
-      "version_requirement": "2.x"
+      "name": "puppet/augeasproviders_core",
+      "version_requirement":  ">= 3.2.0"
     },
     {
-      "name": "herculesteam/augeasproviders_shellvar",
-      "version_requirement": "2.x"
+      "name": "puppet/augeasproviders_shellvar",
+      "version_requirement": ">= 5.0.0"
     }
+
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": [
-        "8"
-      ]
-    },
-    {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "5",
-        "6",
         "7",
-        "8"
+        "8",
+        "9"
       ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 7.24 < 9.0.0"
+    }
+  ],
+  "pdk-version": "3.0.1",
+  "template-url": "pdk-default#3.0.0",
+  "template-ref": "tags/3.0.0-0-g5bfc1c0"
 }
